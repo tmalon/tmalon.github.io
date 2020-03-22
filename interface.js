@@ -879,6 +879,7 @@ function animate() {
         if (frames[1] > 210) {
             frames[1] = 0
             orig_dpt = Math.floor(94*Math.random())
+            dest_dpt = -1
         }
 
         ctx.font = "40px Arial"
@@ -1372,7 +1373,7 @@ function animate() {
         ctx.strokeStyle = "#ffffff"
         ctx.fillStyle = "#eeeeee"
         ctx.textAlign = "center"
-        ctx.font = "18px Arial"
+        ctx.font = "14px Arial"
         ctx.globalAlpha = 0.25+0.75*Math.abs(time%1000-500)/500
         ctx.strokeText("Cliquer ici pour arrêter le défilement automatique", xy_icone_meteo.x + 16.25*xy_icone_meteo.w, xy_icone_meteo.y+30)
         ctx.fillText("Cliquer ici pour arrêter le défilement automatique", xy_icone_meteo.x + 16.25*xy_icone_meteo.w, xy_icone_meteo.y+30)
@@ -1382,7 +1383,7 @@ function animate() {
             ctx.strokeStyle = "#ffffff"
             ctx.fillStyle = "#eeeeee"
             ctx.textAlign = "center"
-            ctx.font = "18px Arial"
+            ctx.font = "15px Arial"
             ctx.globalAlpha = 0.25+0.75*Math.abs(time%1000-500)/500
             ctx.strokeText("Cliquer sur un département pour voir la répartition des touristes qui en sont originaires", offset_x_prov+w_map/2, offset_y_prov+h_map/2)
             ctx.fillText("Cliquer sur un département pour voir la répartition des touristes qui en sont originaires", offset_x_prov+w_map/2, offset_y_prov+h_map/2)
@@ -1392,7 +1393,7 @@ function animate() {
             ctx.strokeStyle = "#ffffff"
             ctx.fillStyle = "#eeeeee"
             ctx.textAlign = "center"
-            ctx.font = "18px Arial"
+            ctx.font = "15px Arial"
             ctx.globalAlpha = 0.25+0.75*Math.abs(time%1000-500)/500
             ctx.strokeText("Passer le curseur sur une date pour voir le nombre de nuitées à cette date", graphe.x+graphe.w/2, graphe.y-graphe.h+10)
             ctx.fillText("Passer le curseur sur une date pour voir le nombre de nuitées à cette date", graphe.x+graphe.w/2, graphe.y-graphe.h+10)
@@ -1526,11 +1527,13 @@ function handle_click() {
             calendrier = "semaine"
             auto_scroll = true
             dest_dpt = 6
+            orig_dpt = -1
         } else if (etape_histoire == 3) {
             meteo = false
             calendrier = "mois"
             auto_scroll = true
             dest_dpt = 8
+            orig_dpt = -1
         } else if (etape_histoire == 4) {
             event_on = true
             auto_scroll = true
