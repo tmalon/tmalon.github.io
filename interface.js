@@ -154,7 +154,7 @@ function init() {
     img_pause = new_image("./pause.png")
 
     img_event = new_image("./event.png")
-    xy_icone_event = {"x": offset_x + 1066*scale-25-20, "y": offset_y + 783*scale-40-100, "w": 50, "h": 50}
+    xy_icone_event = {"x": offset_x + 1066*scale-110, "y": offset_y + 783*scale-40-100, "w": 50, "h": 50}
 
     img_meteo_on  = new_image("./meteo_on.png")
     img_meteo_off = new_image("./meteo_off.png")
@@ -304,7 +304,7 @@ function animate() {
     ctx.moveTo(0, offset_y-40.5)
     ctx.lineTo(1920, offset_y-40.5)
     ctx.moveTo(xy_histoire.x-50.5, 0)
-    ctx.lineTo(xy_histoire.x-50.5, 1000)
+    ctx.lineTo(xy_histoire.x-50.5, offset_y-40)
     ctx.stroke()
 
     if (!auto_scroll && !day_fixe && xyMouse.x >= graphe["x"] && xyMouse.x < graphe["x"] + graphe["w"] && xyMouse.y < graphe["y"] && xyMouse.y > graphe["y"] - graphe["h"]*1.5) {
@@ -786,7 +786,7 @@ function animate() {
         frame ++
         if (frame >= 3) {
             frame = 0
-            day = (day+1)%365
+            day = (day+2)%365
         }
     } else {
         ctx.drawImage(img_play, xy_icone_meteo["x"]+15.75*xy_icone_meteo["w"], xy_icone_meteo["y"]-xy_icone_meteo["h"]/2, xy_icone_meteo["w"], xy_icone_meteo["h"])
@@ -1120,6 +1120,43 @@ function animate() {
         ctx.drawImage(canv, offset_x_prov, offset_y_prov, w_map, h_map)
         delete canv
         ctx.drawImage(img_france_vierge, offset_x_prov, offset_y_prov, w_map, h_map)
+
+        // Ajout chiffres clés
+
+        ctx.beginPath()
+        ctx.moveTo(offset_x_prov + w_map + 40, offset_y_prov)
+        ctx.lineTo(offset_x_prov + w_map + 40, offset_y_prov+h_map-50)
+        ctx.lineTo(offset_x_prov + w_map + 340, offset_y_prov+h_map-50)
+        ctx.lineTo(offset_x_prov + w_map + 340, offset_y_prov)
+        ctx.lineTo(offset_x_prov + w_map + 40, offset_y_prov)
+        ctx.strokeStyle = "#222222"
+        ctx.stroke()
+        ctx.fillStyle = "#444444"
+        ctx.fill()
+
+        ctx.strokeStyle = "#ffffff"
+        ctx.fillStyle = "#eeeeee"
+        ctx.textAlign = "center"
+        ctx.font = "24px Arial"
+
+        ctx.strokeText("L'année 2018 en", offset_x_prov + w_map + 40 +150, offset_y_prov+40*1)
+        ctx.fillText("L'année 2018 en", offset_x_prov + w_map + 40 + 150, offset_y_prov+40*1)
+
+        ctx.strokeText("quelques chiffres clé :", offset_x_prov + w_map + 40 + 150, offset_y_prov+40*2-5)
+        ctx.fillText("quelques chiffres clé :", offset_x_prov + w_map + 40 + 150, offset_y_prov+40*2-5)
+
+        ctx.textAlign = "left"
+        ctx.font = "18px Arial"
+        ctx.strokeText("⚫ 200 millions de nuitées", offset_x_prov + w_map + 40 + 20, offset_y_prov+40*3)
+        ctx.fillText("⚫ 200 millions de nuitées", offset_x_prov + w_map + 40 + 20, offset_y_prov+40*3)
+
+        ctx.strokeText("⚫ 41% de touristes étrangers", offset_x_prov + w_map + 40 + 20, offset_y_prov+40*4)
+        ctx.fillText("⚫ 41% de touristes étrangers", offset_x_prov + w_map + 40 + 20, offset_y_prov+40*4)
+
+        ctx.strokeText("⚫ 200 événements", offset_x_prov + w_map + 40 + 20, offset_y_prov+40*5)
+        ctx.fillText("⚫ 200 événements", offset_x_prov + w_map + 40 + 20, offset_y_prov+40*5)
+
+
     } else if (xy_icone_monde.w == 100) {
 //        ctx.drawImage(img_fr, offset_x_prov+60+100, offset_y_prov+45*0+80)
         ctx.drawImage(img_de, offset_x_prov+60+100, offset_y_prov+48*1+60)
