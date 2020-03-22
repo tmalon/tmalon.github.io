@@ -1,6 +1,10 @@
 init()
 animate()
 
+window.onresize = function(event) {
+    gs = window.innerWidth/1920
+}
+
 function new_image(path) {
 	img = new Image()
 	img.src = path
@@ -16,6 +20,10 @@ function getMousePos(c, event) {
 }
 
 function init() {
+
+    // Global scaling
+    gs = 1
+    gs = window.innerWidth/1920
 
     document.addEventListener('contextmenu', event => event.preventDefault());
 
@@ -297,28 +305,28 @@ function animate() {
     requestAnimationFrame(animate)
     ctx.clearRect(0, 0, c.width, c.height)
 
-    ctx.drawImage(img_bois, xy_histoire.x-50, 0, 1920-(xy_histoire.x-50), offset_y-40)
+    ctx.drawImage(img_bois, (xy_histoire.x-50)*gs, 0, (1920-(xy_histoire.x-50))*gs, (offset_y-40)*gs)
 
     ctx.strokeStyle = "#ffffff"
     ctx.beginPath()
-    ctx.moveTo(0, offset_y-40.5)
-    ctx.lineTo(1920, offset_y-40.5)
-    ctx.moveTo(xy_histoire.x-50.5, 0)
-    ctx.lineTo(xy_histoire.x-50.5, offset_y-40)
+    ctx.moveTo(0, (offset_y-40.5)*gs)
+    ctx.lineTo(1920*gs, (offset_y-40.5)*gs)
+    ctx.moveTo((xy_histoire.x-50.5)*gs, 0)
+    ctx.lineTo((xy_histoire.x-50.5)*gs, (offset_y-40)*gs)
     ctx.stroke()
 
-    if (!auto_scroll && !day_fixe && xyMouse.x >= graphe["x"] && xyMouse.x < graphe["x"] + graphe["w"] && xyMouse.y < graphe["y"] && xyMouse.y > graphe["y"] - graphe["h"]*1.5) {
-        day = Math.floor((xyMouse.x - graphe["x"]) / (graphe["w"]/365))
+    if (!auto_scroll && !day_fixe && xyMouse.x >= graphe["x"]*gs && xyMouse.x < (graphe["x"] + graphe["w"])*gs && xyMouse.y < graphe["y"]*gs && xyMouse.y > (graphe["y"] - graphe["h"]*1.5)*gs) {
+        day = Math.floor((xyMouse.x - graphe["x"]*gs) / (graphe["w"]*gs/365))
     }
 
-    ctx.drawImage(img_vierge, offset_x, offset_y, img_vierge.width*scale, img_vierge.height*scale)
+    ctx.drawImage(img_vierge, offset_x*gs, offset_y*gs, img_vierge.width*scale*gs, img_vierge.height*scale*gs)
 
     for (let i = 0; i < departements.length; i++) {
         // Nuitées
         if (mode === "nuitees") {
             if (i == dest_dpt) {
                 ctx.globalAlpha = 0.25+0.75*Math.abs(time%1000-500)/500
-                ctx.drawImage(departements[i]["img_bleu"], offset_x, offset_y, img_vierge.width*scale, img_vierge.height*scale)
+                ctx.drawImage(departements[i]["img_bleu"], offset_x*gs, offset_y*gs, img_vierge.width*scale*gs, img_vierge.height*scale*gs)
             } else if (dest_dpt > -1) {
 //                vol_dep = departements[dest_dpt]["volume"][day][parseInt(departements[i]["id"])-1]
                 legende = 10000
@@ -349,7 +357,7 @@ function animate() {
                     vol_dep = departements[i]["volume"][start_mois[mois_annee[day]]][orig_dpt]
                 }
                 ctx.globalAlpha = vol_dep/legende
-                ctx.drawImage(departements[i]["img"], offset_x, offset_y, img_vierge.width*scale, img_vierge.height*scale)
+                ctx.drawImage(departements[i]["img"], offset_x*gs, offset_y*gs, img_vierge.width*scale*gs, img_vierge.height*scale*gs)
             } else {
                 if (calendrier === "jour") {
                     ctx.globalAlpha = departements[i]["nuitees"][day]/legende
@@ -367,30 +375,30 @@ function animate() {
                     }
                     ctx.globalAlpha = tot/legende
                 }
-                ctx.drawImage(departements[i]["img"], offset_x, offset_y, img_vierge.width*scale, img_vierge.height*scale)
+                ctx.drawImage(departements[i]["img"], offset_x*gs, offset_y*gs, img_vierge.width*scale*gs, img_vierge.height*scale*gs)
             }
         // Températures
         } else if (mode === "temp") {
             temp = departements[i]["temp"][day]
             if (temp >= 5) {
                 ctx.globalAlpha = (temp-5)/30
-                ctx.drawImage(departements[i]["img_orange"], offset_x, offset_y, img_vierge.width*scale, img_vierge.height*scale)
+                ctx.drawImage(departements[i]["img_orange"], offset_x*gs, offset_y*gs, img_vierge.width*scale*gs, img_vierge.height*scale*gs)
             } else {
                 ctx.globalAlpha = 1-(temp+5)/10
-                ctx.drawImage(departements[i]["img_cyan"], offset_x, offset_y, img_vierge.width*scale, img_vierge.height*scale)
+                ctx.drawImage(departements[i]["img_cyan"], offset_x*gs, offset_y*gs, img_vierge.width*scale*gs, img_vierge.height*scale*gs)
             }
         }
 
         ctx.textAlign = "center"
-        ctx.font = "" + (44*scale) + "px Arial"
+        ctx.font = "" + (44*scale*gs) + "px Arial"
         ctx.globalAlpha = 0.95
         ctx.fillStyle = "#eeeeee"
-        ctx.strokeText(departements[i]["id"], offset_x + img_vierge.width*scale*departements[i]["x"], offset_y + img_vierge.height*scale*departements[i]["y"]+10*scale)
-        ctx.fillText(departements[i]["id"], offset_x + img_vierge.width*scale*departements[i]["x"], offset_y + img_vierge.height*scale*departements[i]["y"]+10*scale)
-        ctx.font = "" + (22*scale) + "px Arial"
+        ctx.strokeText(departements[i]["id"], (offset_x + img_vierge.width*scale*departements[i]["x"])*gs, (offset_y + img_vierge.height*scale*departements[i]["y"]+10*scale)*gs)
+        ctx.fillText(departements[i]["id"], (offset_x + img_vierge.width*scale*departements[i]["x"])*gs, (offset_y + img_vierge.height*scale*departements[i]["y"]+10*scale)*gs)
+        ctx.font = "" + (22*scale*gs) + "px Arial"
         ctx.fillStyle = "#eeeeee"
-        ctx.strokeText(departements[i]["nom"], offset_x + img_vierge.width*scale*departements[i]["x"], offset_y + img_vierge.height*scale*departements[i]["y"]+35*scale)
-        ctx.fillText(departements[i]["nom"], offset_x + img_vierge.width*scale*departements[i]["x"], offset_y + img_vierge.height*scale*departements[i]["y"]+35*scale)
+        ctx.strokeText(departements[i]["nom"], (offset_x + img_vierge.width*scale*departements[i]["x"])*gs, (offset_y + img_vierge.height*scale*departements[i]["y"]+35*scale)*gs)
+        ctx.fillText(departements[i]["nom"], (offset_x + img_vierge.width*scale*departements[i]["x"])*gs, (offset_y + img_vierge.height*scale*departements[i]["y"]+35*scale)*gs)
         ctx.globalAlpha = 1
     }
 
@@ -429,12 +437,11 @@ function animate() {
                 }
             }
             if (liste_events.length > 0) {
-                ctx.drawImage(img_event, offset_x + img_vierge.width*scale*departements[i]["x"]-16, offset_y + img_vierge.height*scale*departements[i]["y"]+35*scale, 32, 32)
+                ctx.drawImage(img_event, (offset_x + img_vierge.width*scale*departements[i]["x"]-16)*gs, (offset_y + img_vierge.height*scale*departements[i]["y"]+35*scale)*gs, 32*gs, 32*gs)
                 ctx.textAlign = "center"
-                ctx.font = "10px Arial"
-                ctx.strokeText(liste_events.length, offset_x + img_vierge.width*scale*departements[i]["x"]+30*scale, offset_y + img_vierge.height*scale*departements[i]["y"]+65*scale)
-                ctx.fillText(liste_events.length, offset_x + img_vierge.width*scale*departements[i]["x"]+30*scale, offset_y + img_vierge.height*scale*departements[i]["y"]+65*scale)
-
+                ctx.font = "" + (10*gs) + "px Arial"
+                ctx.strokeText(liste_events.length, (offset_x + img_vierge.width*scale*departements[i]["x"]+30*scale)*gs, (offset_y + img_vierge.height*scale*departements[i]["y"]+65*scale)*gs)
+                ctx.fillText(liste_events.length, (offset_x + img_vierge.width*scale*departements[i]["x"]+30*scale)*gs, (offset_y + img_vierge.height*scale*departements[i]["y"]+65*scale)*gs)
 
                 mots = liste_events[Math.floor(time/3000)%liste_events.length].split(" ")
                 ligne = 0
@@ -442,19 +449,19 @@ function animate() {
                 texte_to_print = ""
                 while (mot < mots.length && mot < 100) {
                     texte_to_print_potentiel = texte_to_print + mots[mot] + " "
-                    if (ctx.measureText(texte_to_print_potentiel).width < 160) {
+                    if (ctx.measureText(texte_to_print_potentiel).width < 160*gs) {
                         texte_to_print = texte_to_print_potentiel
                         mot++
                     } else {
-                        ctx.strokeText(texte_to_print, offset_x + img_vierge.width*scale*departements[i]["x"], offset_y + img_vierge.height*scale*departements[i]["y"]+65*scale+15+13*ligne)
-                        ctx.fillText(texte_to_print, offset_x + img_vierge.width*scale*departements[i]["x"], offset_y + img_vierge.height*scale*departements[i]["y"]+65*scale+15+13*ligne)
+                        ctx.strokeText(texte_to_print, (offset_x + img_vierge.width*scale*departements[i]["x"])*gs, (offset_y + img_vierge.height*scale*departements[i]["y"]+65*scale+15+13*ligne)*gs)
+                        ctx.fillText(texte_to_print, (offset_x + img_vierge.width*scale*departements[i]["x"])*gs, (offset_y + img_vierge.height*scale*departements[i]["y"]+65*scale+15+13*ligne)*gs)
                         texte_to_print = ""
                         ligne++
                     }
                 }
 
-                ctx.strokeText(texte_to_print, offset_x + img_vierge.width*scale*departements[i]["x"], offset_y + img_vierge.height*scale*departements[i]["y"]+65*scale+15+13*ligne)
-                ctx.fillText(texte_to_print, offset_x + img_vierge.width*scale*departements[i]["x"], offset_y + img_vierge.height*scale*departements[i]["y"]+65*scale+15+13*ligne)
+                ctx.strokeText(texte_to_print, (offset_x + img_vierge.width*scale*departements[i]["x"])*gs, (offset_y + img_vierge.height*scale*departements[i]["y"]+65*scale+15+13*ligne)*gs)
+                ctx.fillText(texte_to_print, (offset_x + img_vierge.width*scale*departements[i]["x"])*gs, (offset_y + img_vierge.height*scale*departements[i]["y"]+65*scale+15+13*ligne)*gs)
             }
         }
     }
@@ -464,56 +471,56 @@ function animate() {
         for (let i = 1; i <= 200; i++) {
             ctx.globalAlpha = i/200
             ctx.beginPath()
-            ctx.moveTo(0.5+offset_x + img_vierge.width*scale+i-200-20, offset_y + img_vierge.height*scale-50)
-            ctx.lineTo(0.5+offset_x + img_vierge.width*scale+i-200-20, offset_y + img_vierge.height*scale-40-50)
+            ctx.moveTo((0.5+offset_x + img_vierge.width*scale+i-200-20)*gs, (offset_y + img_vierge.height*scale-50)*gs)
+            ctx.lineTo((0.5+offset_x + img_vierge.width*scale+i-200-20)*gs, (offset_y + img_vierge.height*scale-40-50)*gs)
             ctx.stroke()
         }
 
         ctx.strokeStyle = "#ffffff"
         ctx.beginPath()
-        ctx.moveTo(0.5+offset_x + img_vierge.width*scale-200-20, offset_y + img_vierge.height*scale-50)
-        ctx.lineTo(0.5+offset_x + img_vierge.width*scale-200-20, offset_y + img_vierge.height*scale-40-50)
-        ctx.lineTo(0.5+offset_x + img_vierge.width*scale-20, offset_y + img_vierge.height*scale-40-50)
-        ctx.lineTo(0.5+offset_x + img_vierge.width*scale-20, offset_y + img_vierge.height*scale-50)
-        ctx.lineTo(0.5+offset_x + img_vierge.width*scale-200-20, offset_y + img_vierge.height*scale-50)
+        ctx.moveTo((0.5+offset_x + img_vierge.width*scale-200-20)*gs, (offset_y + img_vierge.height*scale-50)*gs)
+        ctx.lineTo((0.5+offset_x + img_vierge.width*scale-200-20)*gs, (offset_y + img_vierge.height*scale-40-50)*gs)
+        ctx.lineTo((0.5+offset_x + img_vierge.width*scale-20)*gs, (offset_y + img_vierge.height*scale-40-50)*gs)
+        ctx.lineTo((0.5+offset_x + img_vierge.width*scale-20)*gs, (offset_y + img_vierge.height*scale-50)*gs)
+        ctx.lineTo((0.5+offset_x + img_vierge.width*scale-200-20)*gs, (offset_y + img_vierge.height*scale-50)*gs)
         ctx.stroke()
     } else if (dest_dpt > -1 && xy_icone_monde.w < 100) {
         ctx.strokeStyle = "#ff0000"
         for (let i = 1; i <= 200; i++) {
             ctx.globalAlpha = i/200
             ctx.beginPath()
-            ctx.moveTo(0.5+offset_x_prov + 600*scale+i+240-20, offset_y_prov + img_vierge.height*scale-50)
-            ctx.lineTo(0.5+offset_x_prov + 600*scale+i+240-20, offset_y_prov + img_vierge.height*scale-40-50)
+            ctx.moveTo((0.5+offset_x_prov + 600*scale+i+240-20)*gs, (offset_y_prov + img_vierge.height*scale-50)*gs)
+            ctx.lineTo((0.5+offset_x_prov + 600*scale+i+240-20)*gs, (offset_y_prov + img_vierge.height*scale-40-50)*gs)
             ctx.stroke()
         }
 
         ctx.strokeStyle = "#ffffff"
         ctx.beginPath()
-        ctx.moveTo(0.5+offset_x_prov + 600*scale+1+240-20, offset_y_prov + img_vierge.height*scale-50)
-        ctx.lineTo(0.5+offset_x_prov + 600*scale+1+240-20, offset_y_prov + img_vierge.height*scale-40-50)
-        ctx.lineTo(0.5+offset_x_prov + 600*scale+200+240-20, offset_y_prov + img_vierge.height*scale-40-50)
-        ctx.lineTo(0.5+offset_x_prov + 600*scale+200+240-20, offset_y_prov + img_vierge.height*scale-50)
-        ctx.lineTo(0.5+offset_x_prov + 600*scale+1+240-20, offset_y_prov + img_vierge.height*scale-50)
+        ctx.moveTo((0.5+offset_x_prov + 600*scale+1+240-20)*gs, (offset_y_prov + img_vierge.height*scale-50)*gs)
+        ctx.lineTo((0.5+offset_x_prov + 600*scale+1+240-20)*gs, (offset_y_prov + img_vierge.height*scale-40-50)*gs)
+        ctx.lineTo((0.5+offset_x_prov + 600*scale+200+240-20)*gs, (offset_y_prov + img_vierge.height*scale-40-50)*gs)
+        ctx.lineTo((0.5+offset_x_prov + 600*scale+200+240-20)*gs, (offset_y_prov + img_vierge.height*scale-50)*gs)
+        ctx.lineTo((0.5+offset_x_prov + 600*scale+1+240-20)*gs, (offset_y_prov + img_vierge.height*scale-50)*gs)
         ctx.stroke()
     }
 
     if (!event_on) {
         ctx.globalAlpha = 0.25
     }
-    ctx.drawImage(img_event, xy_icone_event.x-0.5*xy_icone_event.w, xy_icone_event.y-0.5*xy_icone_event.h, xy_icone_event.w, xy_icone_event.h)
+    ctx.drawImage(img_event, (xy_icone_event.x-0.5*xy_icone_event.w)*gs, (xy_icone_event.y-0.5*xy_icone_event.h)*gs, xy_icone_event.w*gs, xy_icone_event.h*gs)
     ctx.globalAlpha = 1
 
     ctx.textAlign = "center"
-    ctx.font = "14px Arial"
+    ctx.font = "" + (14*gs) + "px Arial"
 
     if (dest_dpt == -1 && orig_dpt == -1) {
-        ctx.strokeText(format(""+legende), 0.5+offset_x + img_vierge.width*scale-20, offset_y + img_vierge.height*scale-44-50)
-        ctx.fillText(format(""+legende), 0.5+offset_x + img_vierge.width*scale-20, offset_y + img_vierge.height*scale-44-50)
-        ctx.strokeText("0", 0.5+offset_x + img_vierge.width*scale-200-20, offset_y + img_vierge.height*scale-44-50)
-        ctx.fillText("0", 0.5+offset_x + img_vierge.width*scale-200-20, offset_y + img_vierge.height*scale-44-50)
+        ctx.strokeText(format(""+legende), (0.5+offset_x + img_vierge.width*scale-20)*gs, (offset_y + img_vierge.height*scale-44-50)*gs)
+        ctx.fillText(format(""+legende), (0.5+offset_x + img_vierge.width*scale-20)*gs, (offset_y + img_vierge.height*scale-44-50)*gs)
+        ctx.strokeText("0", (0.5+offset_x + img_vierge.width*scale-200-20)*gs, (offset_y + img_vierge.height*scale-44-50)*gs)
+        ctx.fillText("0", (0.5+offset_x + img_vierge.width*scale-200-20)*gs, (offset_y + img_vierge.height*scale-44-50)*gs)
     } else if (dest_dpt > -1) {
-        ctx.strokeText("0", 0.5+offset_x_prov + 600*scale+1+240-20, offset_y + img_vierge.height*scale-44-50)
-        ctx.fillText("0", 0.5+offset_x_prov + 600*scale+1+240-20, offset_y + img_vierge.height*scale-44-50)
+        ctx.strokeText("0", (0.5+offset_x_prov + 600*scale+1+240-20)*gs, (offset_y + img_vierge.height*scale-44-50)*gs)
+        ctx.fillText("0", (0.5+offset_x_prov + 600*scale+1+240-20)*gs, (offset_y + img_vierge.height*scale-44-50)*gs)
 
         if (calendrier === "jour") {
             vv = 2000//departements[dest_dpt]["volume"][day]
@@ -523,23 +530,23 @@ function animate() {
             vv = 50000//departements[dest_dpt]["volume"][start_mois[mois_annee[day]]]
         }
 
-        ctx.strokeText(""+vv, 0.5+offset_x_prov + 200+600*scale+1+240-20, offset_y + img_vierge.height*scale-44-50)
-        ctx.fillText(""+vv, 0.5+offset_x_prov + 200+600*scale+1+240-20, offset_y + img_vierge.height*scale-44-50)
+        ctx.strokeText(""+vv, (0.5+offset_x_prov + 200+600*scale+1+240-20)*gs, (offset_y + img_vierge.height*scale-44-50)*gs)
+        ctx.fillText(""+vv, (0.5+offset_x_prov + 200+600*scale+1+240-20)*gs, (offset_y + img_vierge.height*scale-44-50)*gs)
 
 
     } else if (orig_dpt > -1) {
         if (calendrier === "jour") {
-            ctx.strokeText(format(""+legende), 0.5+offset_x + img_vierge.width*scale-20, offset_y + img_vierge.height*scale-44-50)
-            ctx.fillText(format(""+legende), 0.5+offset_x + img_vierge.width*scale-20, offset_y + img_vierge.height*scale-44-50)
+            ctx.strokeText(format(""+legende), (0.5+offset_x + img_vierge.width*scale-20)*gs, (offset_y + img_vierge.height*scale-44-50)*gs)
+            ctx.fillText(format(""+legende), (0.5+offset_x + img_vierge.width*scale-20)*gs, (offset_y + img_vierge.height*scale-44-50)*gs)
         } else if (calendrier === "semaine") {
-            ctx.strokeText(format(""+(legende*7)), 0.5+offset_x + img_vierge.width*scale-20, offset_y + img_vierge.height*scale-44-50)
-            ctx.fillText(format(""+(legende*7)), 0.5+offset_x + img_vierge.width*scale-20, offset_y + img_vierge.height*scale-44-50)
+            ctx.strokeText(format(""+(legende*7)), (0.5+offset_x + img_vierge.width*scale-20)*gs, (offset_y + img_vierge.height*scale-44-50)*gs)
+            ctx.fillText(format(""+(legende*7)), (0.5+offset_x + img_vierge.width*scale-20)*gs, (offset_y + img_vierge.height*scale-44-50)*gs)
         } else if (calendrier === "mois") {
-            ctx.strokeText(format(""+(legende*30)), 0.5+offset_x + img_vierge.width*scale-20, offset_y + img_vierge.height*scale-44-50)
-            ctx.fillText(format(""+(legende*30)), 0.5+offset_x + img_vierge.width*scale-20, offset_y + img_vierge.height*scale-44-50)
+            ctx.strokeText(format(""+(legende*30)), (0.5+offset_x + img_vierge.width*scale-20)*gs, (offset_y + img_vierge.height*scale-44-50)*gs)
+            ctx.fillText(format(""+(legende*30)), (0.5+offset_x + img_vierge.width*scale-20)*gs, (offset_y + img_vierge.height*scale-44-50)*gs)
         }
-        ctx.strokeText("0", 0.5+offset_x + img_vierge.width*scale-200-20, offset_y + img_vierge.height*scale-44-50)
-        ctx.fillText("0", 0.5+offset_x + img_vierge.width*scale-200-20, offset_y + img_vierge.height*scale-44-50)
+        ctx.strokeText("0", (0.5+offset_x + img_vierge.width*scale-200-20)*gs, (offset_y + img_vierge.height*scale-44-50)*gs)
+        ctx.fillText("0", (0.5+offset_x + img_vierge.width*scale-200-20)*gs, (offset_y + img_vierge.height*scale-44-50)*gs)
     }
 
     date = new Date(dates[day])
@@ -547,23 +554,23 @@ function animate() {
     month = mois[date.getMonth()]
 
     ctx.beginPath()
-    ctx.moveTo(0.5+graphe["x"]-10, 0.5+graphe["y"])
-    ctx.lineTo(0.5+graphe["x"]+graphe["w"]+10, 0.5+graphe["y"])
-    ctx.lineTo(0.5+graphe["x"]+graphe["w"]+5, 0.5+graphe["y"]+5)
-    ctx.moveTo(0.5+graphe["x"]+graphe["w"]+10, 0.5+graphe["y"])
-    ctx.lineTo(0.5+graphe["x"]+graphe["w"]+5, 0.5+graphe["y"]-5)
-    ctx.moveTo(0.5+graphe["x"], 0.5+graphe["y"])
-    ctx.lineTo(0.5+graphe["x"], 0.5+graphe["y"]-graphe["h"]*1.15)
-    ctx.lineTo(0.5+graphe["x"]+5, 0.5+graphe["y"]-graphe["h"]*1.15+5)
-    ctx.moveTo(0.5+graphe["x"], 0.5+graphe["y"]-graphe["h"]*1.15)
-    ctx.lineTo(0.5+graphe["x"]-5, 0.5+graphe["y"]-graphe["h"]*1.15+5)
-    ctx.moveTo(0.5+graphe["x"], 0.5+graphe["y"]-graphe["h"]*0.5)
-    ctx.lineTo(0.5+graphe["x"]-5, 0.5+graphe["y"]-graphe["h"]*0.5)
+    ctx.moveTo(gs*(0.5+graphe["x"]-10), (0.5+graphe["y"])*gs)
+    ctx.lineTo(gs*(0.5+graphe["x"]+graphe["w"]+10), (0.5+graphe["y"])*gs)
+    ctx.lineTo(gs*(0.5+graphe["x"]+graphe["w"]+5), (0.5+graphe["y"]+5)*gs)
+    ctx.moveTo(gs*(0.5+graphe["x"]+graphe["w"]+10), (0.5+graphe["y"])*gs)
+    ctx.lineTo(gs*(0.5+graphe["x"]+graphe["w"]+5), (0.5+graphe["y"]-5)*gs)
+    ctx.moveTo(gs*(0.5+graphe["x"]), (0.5+graphe["y"])*gs)
+    ctx.lineTo(gs*(0.5+graphe["x"]), (0.5+graphe["y"]-graphe["h"]*1.15)*gs)
+    ctx.lineTo(gs*(0.5+graphe["x"]+5), (0.5+graphe["y"]-graphe["h"]*1.15+5)*gs)
+    ctx.moveTo(gs*(0.5+graphe["x"]), (0.5+graphe["y"]-graphe["h"]*1.15)*gs)
+    ctx.lineTo(gs*(0.5+graphe["x"]-5), (0.5+graphe["y"]-graphe["h"]*1.15+5)*gs)
+    ctx.moveTo(gs*(0.5+graphe["x"]), (0.5+graphe["y"]-graphe["h"]*0.5)*gs)
+    ctx.lineTo(gs*(0.5+graphe["x"]-5), (0.5+graphe["y"]-graphe["h"]*0.5)*gs)
     if (meteo) {
-        ctx.moveTo(0.5+graphe["x"], 0.5+graphe["y"]-0.1*graphe["h"])
-        ctx.lineTo(0.5+graphe["x"]-5, 0.5+graphe["y"]-0.1*graphe["h"])
-        ctx.moveTo(0.5+graphe["x"], 0.5+graphe["y"]-0.1*graphe["h"]-25/30*graphe["h"])
-        ctx.lineTo(0.5+graphe["x"]-5, 0.5+graphe["y"]-0.1*graphe["h"]-25/30*graphe["h"])
+        ctx.moveTo(gs*(0.5+graphe["x"]), (0.5+graphe["y"]-0.1*graphe["h"])*gs)
+        ctx.lineTo(gs*(0.5+graphe["x"]-5), (0.5+graphe["y"]-0.1*graphe["h"])*gs)
+        ctx.moveTo(gs*(0.5+graphe["x"]), (0.5+graphe["y"]-0.1*graphe["h"]-25/30*graphe["h"])*gs)
+        ctx.lineTo(gs*(0.5+graphe["x"]-5), (0.5+graphe["y"]-0.1*graphe["h"]-25/30*graphe["h"])*gs)
     }
     ctx.stroke()
 
@@ -574,24 +581,24 @@ function animate() {
 
     // Tracé du graphe
     ctx.beginPath()
-    ctx.moveTo(0.5+graphe["x"], 0.5+graphe["y"])
+    ctx.moveTo(0.5+graphe["x"]*gs, 0.5+graphe["y"]*gs)
 
     step = graphe["w"] / 365
     if (calendrier === "jour") {
         for (let i = 0; i < 365; i++) {
             if (dest_dpt == -1 && orig_dpt == -1) {
-                ctx.lineTo(0.5+graphe["x"]+step*i, 0.5+graphe["y"]-graphe["h"]*total[i]/legende_graphe)
+                ctx.lineTo((0.5+graphe["x"]+step*i)*gs, (0.5+graphe["y"]-graphe["h"]*total[i]/legende_graphe)*gs)
             } else if (dest_dpt > -1) {
-                ctx.lineTo(0.5+graphe["x"]+step*i, 0.5+graphe["y"]-graphe["h"]*departements[dest_dpt]["nuitees"][i]/departements[dest_dpt]["leg"])
+                ctx.lineTo((0.5+graphe["x"]+step*i)*gs, (0.5+graphe["y"]-graphe["h"]*departements[dest_dpt]["nuitees"][i]/departements[dest_dpt]["leg"])*gs)
             } else if (orig_dpt > -1) {
                 nb_orig = 0
                 for (let j = 0; j < departements.length; j++) {
                     nb_orig += departements[j]["volume"][i][orig_dpt]
                 }
-                ctx.lineTo(0.5+graphe["x"]+step*i, 0.5+graphe["y"]-graphe["h"]*nb_orig/(legendes[orig_dpt]*5))
+                ctx.lineTo((0.5+graphe["x"]+step*i)*gs, (0.5+graphe["y"]-graphe["h"]*nb_orig/(legendes[orig_dpt]*5))*gs)
             }
             if (offset_jours.indexOf(i+1) >= 0) {
-                ctx.lineTo(0.5+graphe["x"]+step*i, 0.5+graphe["y"])
+                ctx.lineTo((0.5+graphe["x"]+step*i)*gs, (0.5+graphe["y"])*gs)
                 ctx.stroke()
                 ctx.fillStyle = color_mois[offset_jours.indexOf(i+1)]
                 ctx.globalAlpha = 0.7
@@ -599,22 +606,22 @@ function animate() {
                 ctx.globalAlpha = 1
 
                 ctx.beginPath()
-                ctx.moveTo(0.5+graphe["x"]+step*i, 0.5+graphe["y"])
+                ctx.moveTo((0.5+graphe["x"]+step*i)*gs, (0.5+graphe["y"])*gs)
                 if (dest_dpt == -1 && orig_dpt == -1) {
-                    ctx.lineTo(0.5+graphe["x"]+step*i, 0.5+graphe["y"]-graphe["h"]*total[i]/legende_graphe)
+                    ctx.lineTo((0.5+graphe["x"]+step*i)*gs, (0.5+graphe["y"]-graphe["h"]*total[i]/legende_graphe)*gs)
                 } else if (dest_dpt > -1) {
-                    ctx.lineTo(0.5+graphe["x"]+step*i, 0.5+graphe["y"]-graphe["h"]*departements[dest_dpt]["nuitees"][i]/departements[dest_dpt]["leg"])
+                    ctx.lineTo((0.5+graphe["x"]+step*i)*gs, (0.5+graphe["y"]-graphe["h"]*departements[dest_dpt]["nuitees"][i]/departements[dest_dpt]["leg"])*gs)
                 } else if (orig_dpt > -1) {
                     nb_orig = 0
                     for (let j = 0; j < departements.length; j++) {
                         nb_orig += departements[j]["volume"][i][orig_dpt]
                     }
-                    ctx.lineTo(0.5+graphe["x"]+step*i, 0.5+graphe["y"]-graphe["h"]*nb_orig/(legendes[orig_dpt]*5))
+                    ctx.lineTo((0.5+graphe["x"]+step*i)*gs, (0.5+graphe["y"]-graphe["h"]*nb_orig/(legendes[orig_dpt]*5))*gs)
                 }
             }
         }
-        ctx.lineTo(0.5+graphe["x"]+step*365, 0.5+graphe["y"])
-        ctx.lineTo(0.5+graphe["x"], 0.5+graphe["y"])
+        ctx.lineTo((0.5+graphe["x"]+step*365)*gs, (0.5+graphe["y"])*gs)
+        ctx.lineTo((0.5+graphe["x"])*gs, (0.5+graphe["y"])*gs)
         ctx.stroke()
         ctx.fillStyle = "#0000ff"
         ctx.globalAlpha = 0.3
@@ -634,20 +641,20 @@ function animate() {
                 }
             }
             ctx.beginPath()
-            ctx.moveTo(0.5+graphe["x"]+step_semaine*i, 0.5+graphe["y"])
+            ctx.moveTo((0.5+graphe["x"]+step_semaine*i)*gs, (0.5+graphe["y"])*gs)
 
             if (dest_dpt == -1 && orig_dpt == -1) {
-                ctx.lineTo(0.5+graphe["x"]+step_semaine*i, 0.5+graphe["y"]-graphe["h"]*(total_m/legende_graphe))
-                ctx.lineTo(graphe["x"]+step_semaine*(i+1), 0.5+graphe["y"]-graphe["h"]*(total_m/legende_graphe))
+                ctx.lineTo((0.5+graphe["x"]+step_semaine*i)*gs, (0.5+graphe["y"]-graphe["h"]*(total_m/legende_graphe))*gs)
+                ctx.lineTo((graphe["x"]+step_semaine*(i+1))*gs, (0.5+graphe["y"]-graphe["h"]*(total_m/legende_graphe))*gs)
             } else if (dest_dpt > -1) {
-                ctx.lineTo(0.5+graphe["x"]+step_semaine*i, 0.5+graphe["y"]-graphe["h"]*(total_m/departements[dest_dpt]["leg"]))
-                ctx.lineTo(graphe["x"]+step_semaine*(i+1), 0.5+graphe["y"]-graphe["h"]*(total_m/departements[dest_dpt]["leg"]))
+                ctx.lineTo((0.5+graphe["x"]+step_semaine*i)*gs, (0.5+graphe["y"]-graphe["h"]*(total_m/departements[dest_dpt]["leg"]))*gs)
+                ctx.lineTo((graphe["x"]+step_semaine*(i+1))*gs, (0.5+graphe["y"]-graphe["h"]*(total_m/departements[dest_dpt]["leg"]))*gs)
             } else if (orig_dpt > -1) {
-                ctx.lineTo(0.5+graphe["x"]+step_semaine*i, 0.5+graphe["y"]-graphe["h"]*(total_m/(legendes[orig_dpt]*5)))
-                ctx.lineTo(graphe["x"]+step_semaine*(i+1), 0.5+graphe["y"]-graphe["h"]*(total_m/(legendes[orig_dpt]*5)))
+                ctx.lineTo((0.5+graphe["x"]+step_semaine*i)*gs, (0.5+graphe["y"]-graphe["h"]*(total_m/(legendes[orig_dpt]*5)))*gs)
+                ctx.lineTo((graphe["x"]+step_semaine*(i+1))*gs, (0.5+graphe["y"]-graphe["h"]*(total_m/(legendes[orig_dpt]*5)))*gs)
             }
-            ctx.lineTo(graphe["x"]+step_semaine*(i+1), 0.5+graphe["y"])
-            ctx.lineTo(0.5+graphe["x"]+step_semaine*i, 0.5+graphe["y"])
+            ctx.lineTo((graphe["x"]+step_semaine*(i+1))*gs, (0.5+graphe["y"])*gs)
+            ctx.lineTo((0.5+graphe["x"]+step_semaine*i)*gs, (0.5+graphe["y"])*gs)
             ctx.stroke()
             ctx.fillStyle = color_semaine[i]
             if (Math.floor(day/7) == i) {
@@ -691,21 +698,21 @@ function animate() {
                 total_m /= 30
             }
             ctx.beginPath()
-            ctx.moveTo(0.5+graphe["x"]+step*start_mois[i], 0.5+graphe["y"])
-            ctx.lineTo(0.5+graphe["x"]+step*(start_mois[i]+nb_jours_mois[i]), 0.5+graphe["y"])
+            ctx.moveTo((0.5+graphe["x"]+step*start_mois[i])*gs, (0.5+graphe["y"])*gs)
+            ctx.lineTo((0.5+graphe["x"]+step*(start_mois[i]+nb_jours_mois[i]))*gs, (0.5+graphe["y"])*gs)
 
             if (dest_dpt == -1 && orig_dpt == -1) {
-                ctx.lineTo(0.5+graphe["x"]+step*(start_mois[i]+nb_jours_mois[i]), 0.5+graphe["y"]-graphe["h"]*(total_m/legende_graphe))
-                ctx.lineTo(0.5+graphe["x"]+step*start_mois[i], 0.5+graphe["y"]-graphe["h"]*(total_m/legende_graphe))
+                ctx.lineTo((0.5+graphe["x"]+step*(start_mois[i]+nb_jours_mois[i]))*gs, (0.5+graphe["y"]-graphe["h"]*(total_m/legende_graphe))*gs)
+                ctx.lineTo((0.5+graphe["x"]+step*start_mois[i])*gs, (0.5+graphe["y"]-graphe["h"]*(total_m/legende_graphe))*gs)
             } else if (dest_dpt > -1) {
-                ctx.lineTo(0.5+graphe["x"]+step*(start_mois[i]+nb_jours_mois[i]), 0.5+graphe["y"]-graphe["h"]*(total_m/departements[dest_dpt]["leg"]))
-                ctx.lineTo(0.5+graphe["x"]+step*start_mois[i], 0.5+graphe["y"]-graphe["h"]*(total_m/departements[dest_dpt]["leg"]))
+                ctx.lineTo((0.5+graphe["x"]+step*(start_mois[i]+nb_jours_mois[i]))*gs, (0.5+graphe["y"]-graphe["h"]*(total_m/departements[dest_dpt]["leg"]))*gs)
+                ctx.lineTo((0.5+graphe["x"]+step*start_mois[i])*gs, (0.5+graphe["y"]-graphe["h"]*(total_m/departements[dest_dpt]["leg"]))*gs)
             } else if (orig_dpt > -1) {
-                ctx.lineTo(0.5+graphe["x"]+step*(start_mois[i]+nb_jours_mois[i]), 0.5+graphe["y"]-graphe["h"]*(total_m/(legendes[orig_dpt]*5)))
-                ctx.lineTo(0.5+graphe["x"]+step*start_mois[i], 0.5+graphe["y"]-graphe["h"]*(total_m/(legendes[orig_dpt]*5)))
+                ctx.lineTo((0.5+graphe["x"]+step*(start_mois[i]+nb_jours_mois[i]))*gs, (0.5+graphe["y"]-graphe["h"]*(total_m/(legendes[orig_dpt]*5)))*gs)
+                ctx.lineTo((0.5+graphe["x"]+step*start_mois[i])*gs, (0.5+graphe["y"]-graphe["h"]*(total_m/(legendes[orig_dpt]*5)))*gs)
             }
 
-            ctx.lineTo(0.5+graphe["x"]+step*start_mois[i], 0.5+graphe["y"])
+            ctx.lineTo((0.5+graphe["x"]+step*start_mois[i])*gs, (0.5+graphe["y"])*gs)
             ctx.stroke()
             ctx.fillStyle = color_mois[i]
             if (mois_annee[day] == i) {
@@ -736,15 +743,15 @@ function animate() {
             for (let i = 0; i < 365; i++) {
                 if (dest_dpt == -1) {
                     if (i == 0) {
-                        ctx.moveTo(0.5+graphe["x"]+step*i, 0.5+graphe["y"]-0.1*graphe["h"]-temp_moyenne[i]*graphe["h"]/30)
+                        ctx.moveTo((0.5+graphe["x"]+step*i)*gs, (0.5+graphe["y"]-0.1*graphe["h"]-temp_moyenne[i]*graphe["h"]/30)*gs)
                     } else {
-                        ctx.lineTo(0.5+graphe["x"]+step*i, 0.5+graphe["y"]-0.1*graphe["h"]-temp_moyenne[i]*graphe["h"]/30)
+                        ctx.lineTo((0.5+graphe["x"]+step*i)*gs, (0.5+graphe["y"]-0.1*graphe["h"]-temp_moyenne[i]*graphe["h"]/30)*gs)
                     }
                 } else {
                     if (i == 0) {
-                        ctx.moveTo(0.5+graphe["x"]+step*i, 0.5+graphe["y"]-0.1*graphe["h"]-departements[dest_dpt]["temp"][i]*graphe["h"]/30)
+                        ctx.moveTo((0.5+graphe["x"]+step*i)*gs, (0.5+graphe["y"]-0.1*graphe["h"]-departements[dest_dpt]["temp"][i]*graphe["h"]/30)*gs)
                     } else {
-                        ctx.lineTo(0.5+graphe["x"]+step*i, 0.5+graphe["y"]-0.1*graphe["h"]-departements[dest_dpt]["temp"][i]*graphe["h"]/30)
+                        ctx.lineTo((0.5+graphe["x"]+step*i)*gs, (0.5+graphe["y"]-0.1*graphe["h"]-departements[dest_dpt]["temp"][i]*graphe["h"]/30)*gs)
                     }
                 }
             }
@@ -753,22 +760,22 @@ function animate() {
                 if (dest_dpt == -1) {
                     temp_moy_semaine = Math.round((temp_moyenne[7*i]+temp_moyenne[7*i+1]+temp_moyenne[7*i+2]+temp_moyenne[7*i+3]+temp_moyenne[7*i+4]+temp_moyenne[7*i+5]+temp_moyenne[7*i+6])/7)
                     if (i == 0) {
-                        ctx.moveTo(0.5+graphe["x"]+step_semaine*i, 0.5+graphe["y"]-0.1*graphe["h"]-temp_moy_semaine*graphe["h"]/30)
+                        ctx.moveTo((0.5+graphe["x"]+step_semaine*i)*gs, (0.5+graphe["y"]-0.1*graphe["h"]-temp_moy_semaine*graphe["h"]/30)*gs)
                     } else {
-                        ctx.lineTo(0.5+graphe["x"]+step_semaine*i, 0.5+graphe["y"]-0.1*graphe["h"]-temp_moy_semaine*graphe["h"]/30)
+                        ctx.lineTo((0.5+graphe["x"]+step_semaine*i)*gs, (0.5+graphe["y"]-0.1*graphe["h"]-temp_moy_semaine*graphe["h"]/30)*gs)
                     }
                     if (i == 51) {
-                        ctx.lineTo(0.5+graphe["x"]+step_semaine*(i+1), 0.5+graphe["y"]-0.1*graphe["h"]-temp_moy_semaine*graphe["h"]/30)
+                        ctx.lineTo((0.5+graphe["x"]+step_semaine*(i+1))*gs, (0.5+graphe["y"]-0.1*graphe["h"]-temp_moy_semaine*graphe["h"]/30)*gs)
                     }
                 } else {
                     temp_moy_semaine = Math.round((departements[dest_dpt]["temp"][7*i]+departements[dest_dpt]["temp"][7*i+1]+departements[dest_dpt]["temp"][7*i+2]+departements[dest_dpt]["temp"][7*i+3]+departements[dest_dpt]["temp"][7*i+4]+departements[dest_dpt]["temp"][7*i+5]+departements[dest_dpt]["temp"][7*i+6])/7)
                     if (i == 0) {
-                        ctx.moveTo(0.5+graphe["x"]+step_semaine*i, 0.5+graphe["y"]-0.1*graphe["h"]-temp_moy_semaine*graphe["h"]/30)
+                        ctx.moveTo((0.5+graphe["x"]+step_semaine*i)*gs, (0.5+graphe["y"]-0.1*graphe["h"]-temp_moy_semaine*graphe["h"]/30)*gs)
                     } else {
-                        ctx.lineTo(0.5+graphe["x"]+step_semaine*i, 0.5+graphe["y"]-0.1*graphe["h"]-temp_moy_semaine*graphe["h"]/30)
+                        ctx.lineTo((0.5+graphe["x"]+step_semaine*i)*gs, (0.5+graphe["y"]-0.1*graphe["h"]-temp_moy_semaine*graphe["h"]/30)*gs)
                     }
                     if (i == 51) {
-                        ctx.lineTo(0.5+graphe["x"]+step_semaine*(i+1), 0.5+graphe["y"]-0.1*graphe["h"]-temp_moy_semaine*graphe["h"]/30)
+                        ctx.lineTo((0.5+graphe["x"]+step_semaine*(i+1))*gs, (0.5+graphe["y"]-0.1*graphe["h"]-temp_moy_semaine*graphe["h"]/30)*gs)
                     }
                 }
             }
@@ -781,12 +788,12 @@ function animate() {
                     }
                     temp_moy_mois /= 30
                     if (i == 0) {
-                        ctx.moveTo(0.5+graphe["x"]+step*start_mois[i], 0.5+graphe["y"]-0.1*graphe["h"]-temp_moy_mois*graphe["h"]/30)
+                        ctx.moveTo((0.5+graphe["x"]+step*start_mois[i])*gs, (0.5+graphe["y"]-0.1*graphe["h"]-temp_moy_mois*graphe["h"]/30)*gs)
                     } else {
-                        ctx.lineTo(0.5+graphe["x"]+step*start_mois[i], 0.5+graphe["y"]-0.1*graphe["h"]-temp_moy_mois*graphe["h"]/30)
+                        ctx.lineTo((0.5+graphe["x"]+step*start_mois[i])*gs, (0.5+graphe["y"]-0.1*graphe["h"]-temp_moy_mois*graphe["h"]/30)*gs)
                     }
                     if (i == 11) {
-                        ctx.lineTo(0.5+graphe["x"]+step*365, 0.5+graphe["y"]-0.1*graphe["h"]-temp_moy_mois*graphe["h"]/30)
+                        ctx.lineTo((0.5+graphe["x"]+step*365)*gs, (0.5+graphe["y"]-0.1*graphe["h"]-temp_moy_mois*graphe["h"]/30)*gs)
                     }
                 } else {
                     temp_moy_mois = 0
@@ -795,12 +802,12 @@ function animate() {
                     }
                     temp_moy_mois /= 30
                     if (i == 0) {
-                        ctx.moveTo(0.5+graphe["x"]+step*start_mois[i], 0.5+graphe["y"]-0.1*graphe["h"]-temp_moy_mois*graphe["h"]/30)
+                        ctx.moveTo((0.5+graphe["x"]+step*start_mois[i])*gs, (0.5+graphe["y"]-0.1*graphe["h"]-temp_moy_mois*graphe["h"]/30)*gs)
                     } else {
-                        ctx.lineTo(0.5+graphe["x"]+step*start_mois[i], 0.5+graphe["y"]-0.1*graphe["h"]-temp_moy_mois*graphe["h"]/30)
+                        ctx.lineTo((0.5+graphe["x"]+step*start_mois[i])*gs, (0.5+graphe["y"]-0.1*graphe["h"]-temp_moy_mois*graphe["h"]/30)*gs)
                     }
                     if (i == 11) {
-                        ctx.lineTo(0.5+graphe["x"]+step*365, 0.5+graphe["y"]-0.1*graphe["h"]-temp_moy_mois*graphe["h"]/30)
+                        ctx.lineTo((0.5+graphe["x"]+step*365)*gs, (0.5+graphe["y"]-0.1*graphe["h"]-temp_moy_mois*graphe["h"]/30)*gs)
                     }
 
                 }
@@ -820,47 +827,47 @@ function animate() {
         ctx.strokeStyle = "#ffffff"
         ctx.fillStyle = "#ccccff"
         ctx.textAlign = "center"
-        ctx.font = "14px Arial"
-        ctx.strokeText(val_print, x_print, y_print)
-        ctx.fillText(val_print, x_print, y_print)
+        ctx.font = "" + (14*gs) + "px Arial"
+        ctx.strokeText(val_print, x_print*gs, y_print*gs)
+        ctx.fillText(val_print, x_print*gs, y_print*gs)
     }
 
     if (meteo) {
-    ctx.drawImage(img_meteo_on, xy_icone_meteo["x"]-xy_icone_meteo["w"]/2, xy_icone_meteo["y"]-xy_icone_meteo["h"]/2, xy_icone_meteo["w"], xy_icone_meteo["h"])
+        ctx.drawImage(img_meteo_on, (xy_icone_meteo["x"]-xy_icone_meteo["w"]/2)*gs, (xy_icone_meteo["y"]-xy_icone_meteo["h"]/2)*gs, xy_icone_meteo["w"]*gs, xy_icone_meteo["h"]*gs)
     } else {
         ctx.globalAlpha = 0.5
-    ctx.drawImage(img_meteo_on, xy_icone_meteo["x"]-xy_icone_meteo["w"]/2, xy_icone_meteo["y"]-xy_icone_meteo["h"]/2, xy_icone_meteo["w"], xy_icone_meteo["h"])
-    ctx.drawImage(img_meteo_off, xy_icone_meteo["x"]-xy_icone_meteo["w"]/2, xy_icone_meteo["y"]-xy_icone_meteo["h"]/2, xy_icone_meteo["w"], xy_icone_meteo["h"])
+        ctx.drawImage(img_meteo_on, (xy_icone_meteo["x"]-xy_icone_meteo["w"]/2)*gs, (xy_icone_meteo["y"]-xy_icone_meteo["h"]/2)*gs, xy_icone_meteo["w"]*gs, xy_icone_meteo["h"]*gs)
+        ctx.drawImage(img_meteo_off, (xy_icone_meteo["x"]-xy_icone_meteo["w"]/2)*gs, (xy_icone_meteo["y"]-xy_icone_meteo["h"]/2)*gs, xy_icone_meteo["w"]*gs, xy_icone_meteo["h"]*gs)
         ctx.globalAlpha = 1
     }
 
     if (auto_scroll) {
-        ctx.drawImage(img_pause, xy_icone_meteo["x"]+15.75*xy_icone_meteo["w"], xy_icone_meteo["y"]-xy_icone_meteo["h"]/2, xy_icone_meteo["w"], xy_icone_meteo["h"])
+        ctx.drawImage(img_pause, (xy_icone_meteo["x"]+15.75*xy_icone_meteo["w"])*gs, (xy_icone_meteo["y"]-xy_icone_meteo["h"]/2)*gs, xy_icone_meteo["w"]*gs, xy_icone_meteo["h"]*gs)
         frame ++
         if (frame >= 3) {
             frame = 0
             day = (day+2)%365
         }
     } else {
-        ctx.drawImage(img_play, xy_icone_meteo["x"]+15.75*xy_icone_meteo["w"], xy_icone_meteo["y"]-xy_icone_meteo["h"]/2, xy_icone_meteo["w"], xy_icone_meteo["h"])
+        ctx.drawImage(img_play, (xy_icone_meteo["x"]+15.75*xy_icone_meteo["w"])*gs, (xy_icone_meteo["y"]-xy_icone_meteo["h"]/2)*gs, xy_icone_meteo["w"]*gs, xy_icone_meteo["h"]*gs)
     }
 
     if (calendrier !== "jour") {
         ctx.globalAlpha = 0.3
     }
-    ctx.drawImage(img_jour, xy_icone_meteo["x"]-4.25*xy_icone_meteo["w"], xy_icone_meteo["y"]-xy_icone_meteo["h"]/2, xy_icone_meteo["w"], xy_icone_meteo["h"])
+    ctx.drawImage(img_jour, (xy_icone_meteo["x"]-4.25*xy_icone_meteo["w"])*gs, (xy_icone_meteo["y"]-xy_icone_meteo["h"]/2)*gs, xy_icone_meteo["w"]*gs, xy_icone_meteo["h"]*gs)
     ctx.globalAlpha = 1
 
     if (calendrier !== "semaine") {
         ctx.globalAlpha = 0.3
     }
-    ctx.drawImage(img_semaine, xy_icone_meteo["x"]-3.00*xy_icone_meteo["w"], xy_icone_meteo["y"]-xy_icone_meteo["h"]/2, xy_icone_meteo["w"], xy_icone_meteo["h"])
+    ctx.drawImage(img_semaine, (xy_icone_meteo["x"]-3.00*xy_icone_meteo["w"])*gs, (xy_icone_meteo["y"]-xy_icone_meteo["h"]/2)*gs, xy_icone_meteo["w"]*gs, xy_icone_meteo["h"]*gs)
     ctx.globalAlpha = 1
 
     if (calendrier !== "mois") {
         ctx.globalAlpha = 0.3
     }
-    ctx.drawImage(img_mois, xy_icone_meteo["x"]-1.75*xy_icone_meteo["w"], xy_icone_meteo["y"]-xy_icone_meteo["h"]/2, xy_icone_meteo["w"], xy_icone_meteo["h"])
+    ctx.drawImage(img_mois, (xy_icone_meteo["x"]-1.75*xy_icone_meteo["w"])*gs, (xy_icone_meteo["y"]-xy_icone_meteo["h"]/2)*gs, xy_icone_meteo["w"]*gs, xy_icone_meteo["h"]*gs)
     ctx.globalAlpha = 1
 
 
@@ -869,15 +876,15 @@ function animate() {
     if (calendrier === "jour") {
         ctx.beginPath()
         if (dest_dpt == -1 && orig_dpt == -1) {
-            ctx.arc(0.5+graphe["x"]+step*day, 0.5+graphe["y"]-graphe["h"]*total[day]/legende_graphe, 3, 0, 2*Math.PI)
+            ctx.arc((0.5+graphe["x"]+step*day)*gs, (0.5+graphe["y"]-graphe["h"]*total[day]/legende_graphe)*gs, 3*gs, 0, 2*Math.PI)
         } else if (dest_dpt > -1) {
-            ctx.arc(0.5+graphe["x"]+step*day, 0.5+graphe["y"]-graphe["h"]*departements[dest_dpt]["nuitees"][day]/departements[dest_dpt]["leg"], 3, 0, 2*Math.PI)
+            ctx.arc((0.5+graphe["x"]+step*day)*gs, (0.5+graphe["y"]-graphe["h"]*departements[dest_dpt]["nuitees"][day]/departements[dest_dpt]["leg"])*gs, 3*gs, 0, 2*Math.PI)
         } else if (orig_dpt > -1) {
             nb_orig = 0
             for (let j = 0; j < departements.length; j++) {
                 nb_orig += departements[j]["volume"][day][orig_dpt]
             }
-            ctx.arc(0.5+graphe["x"]+step*day, 0.5+graphe["y"]-graphe["h"]*nb_orig/(legendes[orig_dpt]*5), 3, 0, 2*Math.PI)
+            ctx.arc((0.5+graphe["x"]+step*day)*gs, (0.5+graphe["y"]-graphe["h"]*nb_orig/(legendes[orig_dpt]*5))*gs, 3*gs, 0, 2*Math.PI)
         }
         ctx.fillStyle = "#ccccff"
         ctx.stroke()
@@ -887,7 +894,7 @@ function animate() {
     ctx.strokeStyle = "#ffffff"
     ctx.fillStyle = "#ccccff"
     ctx.textAlign = "center"
-    ctx.font = "14px Arial"
+    ctx.font = "" + (14*gs) + "px Arial"
     if (calendrier === "jour") {
         if (dest_dpt == -1) {
             nb_nuitees = "" + total[day]
@@ -897,45 +904,45 @@ function animate() {
         nb_nuitees = format(nb_nuitees)
 
         if (dest_dpt == -1 && orig_dpt == -1) {
-            ctx.strokeText(nb_nuitees, 0.5+graphe["x"]+step*day, 0.5+graphe["y"]-graphe["h"]*total[day]/legende_graphe-10)
-            ctx.fillText(nb_nuitees, 0.5+graphe["x"]+step*day, 0.5+graphe["y"]-graphe["h"]*total[day]/legende_graphe-10)
+            ctx.strokeText(nb_nuitees, (0.5+graphe["x"]+step*day)*gs, (0.5+graphe["y"]-graphe["h"]*total[day]/legende_graphe-10)*gs)
+            ctx.fillText(nb_nuitees, (0.5+graphe["x"]+step*day)*gs, (0.5+graphe["y"]-graphe["h"]*total[day]/legende_graphe-10)*gs)
         } else if (dest_dpt > -1) {
-            ctx.strokeText(nb_nuitees, 0.5+graphe["x"]+step*day, 0.5+graphe["y"]-graphe["h"]*departements[dest_dpt]["nuitees"][day]/departements[dest_dpt]["leg"]-10)
-            ctx.fillText(nb_nuitees, 0.5+graphe["x"]+step*day, 0.5+graphe["y"]-graphe["h"]*departements[dest_dpt]["nuitees"][day]/departements[dest_dpt]["leg"]-10)
+            ctx.strokeText(nb_nuitees, (0.5+graphe["x"]+step*day)*gs, (0.5+graphe["y"]-graphe["h"]*departements[dest_dpt]["nuitees"][day]/departements[dest_dpt]["leg"]-10)*gs)
+            ctx.fillText(nb_nuitees, (0.5+graphe["x"]+step*day)*gs, (0.5+graphe["y"]-graphe["h"]*departements[dest_dpt]["nuitees"][day]/departements[dest_dpt]["leg"]-10)*gs)
         } else if (orig_dpt > -1) {
-            ctx.strokeText(nb_orig, 0.5+graphe["x"]+step*day, 0.5+graphe["y"]-graphe["h"]*nb_orig/(legendes[orig_dpt]*5)-10)
-            ctx.fillText(nb_orig, 0.5+graphe["x"]+step*day, 0.5+graphe["y"]-graphe["h"]*nb_orig/(legendes[orig_dpt]*5)-10)
+            ctx.strokeText(nb_orig, (0.5+graphe["x"]+step*day)*gs, (0.5+graphe["y"]-graphe["h"]*nb_orig/(legendes[orig_dpt]*5)-10)*gs)
+            ctx.fillText(nb_orig, (0.5+graphe["x"]+step*day)*gs, (0.5+graphe["y"]-graphe["h"]*nb_orig/(legendes[orig_dpt]*5)-10)*gs)
         }
     }
 
     ctx.strokeStyle = "#ffffff"
     ctx.fillStyle = "#eeeeee"
-    ctx.font = "28px Arial"
+    ctx.font = "" + (28*gs) + "px Arial"
     if (calendrier === "jour") {
-        ctx.strokeText(jour + " " + month + " 2018", 0.5+graphe["x"]+step*365/2, 0.5+graphe["y"]+36)
-        ctx.fillText(jour + " " + month + " 2018", 0.5+graphe["x"]+step*365/2, 0.5+graphe["y"]+36)
+        ctx.strokeText(jour + " " + month + " 2018", (0.5+graphe["x"]+step*365/2)*gs, (0.5+graphe["y"]+36)*gs)
+        ctx.fillText(jour + " " + month + " 2018", (0.5+graphe["x"]+step*365/2)*gs, (0.5+graphe["y"]+36)*gs)
     } else if (calendrier === "semaine") {
-        ctx.strokeText("Semaine " + (1+Math.floor(day/7)) + " " + semaines[Math.floor(day/7)], 0.5+graphe["x"]+step*365/2, 0.5+graphe["y"]+36)
-        ctx.fillText("Semaine " + (1+Math.floor(day/7)) + " " + semaines[Math.floor(day/7)], 0.5+graphe["x"]+step*365/2, 0.5+graphe["y"]+36)
+        ctx.strokeText("Semaine " + (1+Math.floor(day/7)) + " " + semaines[Math.floor(day/7)], (0.5+graphe["x"]+step*365/2)*gs, (0.5+graphe["y"]+36)*gs)
+        ctx.fillText("Semaine " + (1+Math.floor(day/7)) + " " + semaines[Math.floor(day/7)], (0.5+graphe["x"]+step*365/2)*gs, (0.5+graphe["y"]+36)*gs)
     } else if (calendrier === "mois") {
-        ctx.strokeText(mois_maj[mois_annee[day]] + " 2018", 0.5+graphe["x"]+step*365/2, 0.5+graphe["y"]+36)
-        ctx.fillText(mois_maj[mois_annee[day]] + " 2018", 0.5+graphe["x"]+step*365/2, 0.5+graphe["y"]+36)
+        ctx.strokeText(mois_maj[mois_annee[day]] + " 2018", (0.5+graphe["x"]+step*365/2)*gs, (0.5+graphe["y"]+36)*gs)
+        ctx.fillText(mois_maj[mois_annee[day]] + " 2018", (0.5+graphe["x"]+step*365/2)*gs, (0.5+graphe["y"]+36)*gs)
     }
 
-    ctx.drawImage(img_occitanie, 30, 20, 70, 50)
+    ctx.drawImage(img_occitanie, 30*gs, 20*gs, 70*gs, 50*gs)
     ctx.textAlign = "left"
     ctx.fillStyle = "#eeeeee"
-    ctx.font = "48px Arial"
-    ctx.strokeText("Le tourisme en Occitanie en 2018", 110, 60)
-    ctx.fillText("Le tourisme en Occitanie en 2018", 110, 60)
+    ctx.font = "" + (48*gs) + "px Arial"
+    ctx.strokeText("Le tourisme en Occitanie en 2018", 110*gs, 60*gs)
+    ctx.fillText("Le tourisme en Occitanie en 2018", 110*gs, 60*gs)
     ctx.strokeStyle = "#111111"
 
     if (etape_histoire == -1) {
-        ctx.font = "40px Arial"
-        ctx.strokeText("Débuter l'histoire...", xy_histoire.x, xy_histoire.y)
-        ctx.fillText("Débuter l'histoire...", xy_histoire.x, xy_histoire.y)
+        ctx.font = "" + (40*gs) + "px Arial"
+        ctx.strokeText("Débuter l'histoire...", xy_histoire.x*gs, xy_histoire.y*gs)
+        ctx.fillText("Débuter l'histoire...", xy_histoire.x*gs, xy_histoire.y*gs)
 
-        ctx.drawImage(img_bouton, xy_histoire.x + ctx.measureText("Débuter l'histoire...").width+15, xy_histoire.y-35, 40, 40)
+        ctx.drawImage(img_bouton, xy_histoire.x*gs + ctx.measureText("Débuter l'histoire...").width+15*gs, (xy_histoire.y-35)*gs, 40*gs, 40*gs)
     } else {
         frames[etape_histoire]++
 
@@ -945,10 +952,10 @@ function animate() {
             dest_dpt = -1
         }
 
-        ctx.font = "40px Arial"
-        ctx.strokeText(histoire[etape_histoire].titre, xy_histoire.x, xy_histoire.y)
-        ctx.fillText(histoire[etape_histoire].titre, xy_histoire.x, xy_histoire.y)
-        ctx.font = "24px Arial"
+        ctx.font = "" + (40*gs) + "px Arial"
+        ctx.strokeText(histoire[etape_histoire].titre, xy_histoire.x*gs, xy_histoire.y*gs)
+        ctx.fillText(histoire[etape_histoire].titre, xy_histoire.x*gs, xy_histoire.y*gs)
+        ctx.font = "" + (24*gs) + "px Arial"
 
         mots = histoire[etape_histoire].texte.split(" ")
         ligne = 0
@@ -956,52 +963,52 @@ function animate() {
         texte_to_print = ""
         while (mot < mots.length && mot < 100) {
             texte_to_print_potentiel = texte_to_print + mots[mot] + " "
-            if (ctx.measureText(texte_to_print_potentiel).width < 960) {
+            if (ctx.measureText(texte_to_print_potentiel).width < 960*gs) {
                 texte_to_print = texte_to_print_potentiel
                 mot++
             } else {
-                ctx.strokeText(texte_to_print, xy_histoire.x, xy_histoire.y+30*ligne+40)
-                ctx.fillText(texte_to_print, xy_histoire.x, xy_histoire.y+30*ligne+40)
+                ctx.strokeText(texte_to_print, xy_histoire.x*gs, (xy_histoire.y+30*ligne+40)*gs)
+                ctx.fillText(texte_to_print, xy_histoire.x*gs, (xy_histoire.y+30*ligne+40)*gs)
                 texte_to_print = ""
                 ligne++
             }
         }
-        ctx.strokeText(texte_to_print, xy_histoire.x, xy_histoire.y+30*ligne+40)
-        ctx.fillText(texte_to_print, xy_histoire.x, xy_histoire.y+30*ligne+40)
-        ctx.drawImage(img_bouton, xy_histoire.x, xy_histoire.y+30*ligne+50, 40, 40)
+        ctx.strokeText(texte_to_print, xy_histoire.x*gs, (xy_histoire.y+30*ligne+40)*gs)
+        ctx.fillText(texte_to_print, xy_histoire.x*gs, (xy_histoire.y+30*ligne+40)*gs)
+        ctx.drawImage(img_bouton, xy_histoire.x*gs, (xy_histoire.y+30*ligne+50)*gs, 40*gs, 40*gs)
 
         ctx.globalAlpha = 0.25+0.75*Math.abs(time%1000-500)/500
         if (etape_histoire < 6) {
-            ctx.strokeText("Suite de l'histoire...", xy_histoire.x+50, xy_histoire.y+30*ligne+50+27)
-            ctx.fillText("Suite de l'histoire...", xy_histoire.x+50, xy_histoire.y+30*ligne+50+27)
+            ctx.strokeText("Suite de l'histoire...", (xy_histoire.x+50)*gs, (xy_histoire.y+30*ligne+50+27)*gs)
+            ctx.fillText("Suite de l'histoire...", (xy_histoire.x+50)*gs, (xy_histoire.y+30*ligne+50+27)*gs)
         } else {
-            ctx.strokeText("Fin de l'histoire", xy_histoire.x+50, xy_histoire.y+30*ligne+50+27)
-            ctx.fillText("Fin de l'histoire", xy_histoire.x+50, xy_histoire.y+30*ligne+50+27)
+            ctx.strokeText("Fin de l'histoire", (xy_histoire.x+50)*gs, (xy_histoire.y+30*ligne+50+27)*gs)
+            ctx.fillText("Fin de l'histoire", (xy_histoire.x+50)*gs, (xy_histoire.y+30*ligne+50+27)*gs)
         }
         ctx.globalAlpha = 1
     }
 
     ctx.textAlign = "left"
     ctx.fillStyle = "#eeeeee"
-    ctx.font = "24px Arial"
+    ctx.font = "" + (24*gs) + "px Arial"
 
     if (dest_dpt == -1 && orig_dpt == -1) {
-        ctx.strokeText("Nombre total de nuitées en Occitanie " + calendrier_formule[calendrier] + " :", 30, 100)
-        ctx.fillText("Nombre total de nuitées en Occitanie " + calendrier_formule[calendrier] + " :", 30, 100)
+        ctx.strokeText("Nombre total de nuitées en Occitanie " + calendrier_formule[calendrier] + " :", 30*gs, 100*gs)
+        ctx.fillText("Nombre total de nuitées en Occitanie " + calendrier_formule[calendrier] + " :", 30*gs, 100*gs)
     } else if (dest_dpt >= 0) {
-        ctx.strokeText("Nuitées " + departements[dest_dpt]["formule"] + " " + calendrier_formule[calendrier] + " :", 30, 100)
-        ctx.fillText("Nuitées " + departements[dest_dpt]["formule"] + " " + calendrier_formule[calendrier] + " :", 30, 100)
+        ctx.strokeText("Nuitées " + departements[dest_dpt]["formule"] + " " + calendrier_formule[calendrier] + " :", 30*gs, 100*gs)
+        ctx.fillText("Nuitées " + departements[dest_dpt]["formule"] + " " + calendrier_formule[calendrier] + " :", 30*gs, 100*gs)
     } else if (orig_dpt == 19) {
-        ctx.strokeText("Nuitées en Occitanie de touristes venant de Corse (2A/2B) " + calendrier_formule[calendrier] + " :", 30, 100)
-        ctx.fillText("Nuitées en Occitanie de touristes venant de Corse (2A/2B) " + calendrier_formule[calendrier] + " :", 30, 100)
+        ctx.strokeText("Nuitées en Occitanie de touristes venant de Corse (2A/2B) " + calendrier_formule[calendrier] + " :", 30*gs, 100*gs)
+        ctx.fillText("Nuitées en Occitanie de touristes venant de Corse (2A/2B) " + calendrier_formule[calendrier] + " :", 30*gs, 100*gs)
     } else if (orig_dpt >= 0 && orig_dpt != 19) {
-        ctx.strokeText("Nuitées en Occitanie de touristes venant " + noms[orig_dpt] + " (" + (1+orig_dpt) + ") " + calendrier_formule[calendrier] + " :", 30, 100)
-        ctx.fillText("Nuitées en Occitanie de touristes venant " + noms[orig_dpt] + " (" + (1+orig_dpt) + ") " + calendrier_formule[calendrier] + " :", 30, 100)
+        ctx.strokeText("Nuitées en Occitanie de touristes venant " + noms[orig_dpt] + " (" + (1+orig_dpt) + ") " + calendrier_formule[calendrier] + " :", 30*gs, 100*gs)
+        ctx.fillText("Nuitées en Occitanie de touristes venant " + noms[orig_dpt] + " (" + (1+orig_dpt) + ") " + calendrier_formule[calendrier] + " :", 30*gs, 100*gs)
 
         if (etape_histoire ==1) {
             ctx.fillStyle = "#0000ff"
             ctx.globalAlpha = 0.25+0.75*Math.abs(time%1000-500)/500
-            ctx.fillText(noms[orig_dpt],30+ctx.measureText("Nuitées en Occitanie de touristes venant ").width, 100)
+            ctx.fillText(noms[orig_dpt],30*gs+ctx.measureText("Nuitées en Occitanie de touristes venant ").width, 100*gs)
             ctx.globalAlpha = 1
         }
 
@@ -1010,96 +1017,96 @@ function animate() {
     ctx.textAlign = "center"
     ctx.strokeStyle = "#eeeeee"
     ctx.fillStyle = "#eeeeee"
-    ctx.font = "14px Arial"
-    ctx.strokeText("nuitées", graphe["x"], graphe["y"]-graphe["h"]*1.15-10)
+    ctx.font = "" + (14*gs) + "px Arial"
+    ctx.strokeText("nuitées", graphe["x"]*gs, (graphe["y"]-graphe["h"]*1.15-10)*gs)
 
     ctx.textAlign = "right"
     if (dest_dpt == -1 && orig_dpt == -1) {
         if (calendrier === "jour") {
-            ctx.strokeText("500 000", graphe["x"]-8, graphe["y"]-graphe["h"]*0.5+5)
-            ctx.fillText("500 000", graphe["x"]-8, graphe["y"]-graphe["h"]*0.5+5)
+            ctx.strokeText("500 000", (graphe["x"]-8)*gs, (graphe["y"]-graphe["h"]*0.5+5)*gs)
+            ctx.fillText("500 000", (graphe["x"]-8)*gs, (graphe["y"]-graphe["h"]*0.5+5)*gs)
         } else if (calendrier === "semaine") {
-            ctx.strokeText("3 500 000", graphe["x"]-8, graphe["y"]-graphe["h"]*0.5+5)
-            ctx.fillText("3 500 000", graphe["x"]-8, graphe["y"]-graphe["h"]*0.5+5)
+            ctx.strokeText("3 500 000", (graphe["x"]-8)*gs, (graphe["y"]-graphe["h"]*0.5+5)*gs)
+            ctx.fillText("3 500 000", (graphe["x"]-8)*gs, (graphe["y"]-graphe["h"]*0.5+5)*gs)
         } else if (calendrier === "mois") {
-            ctx.strokeText("15 000 000", graphe["x"]-8, graphe["y"]-graphe["h"]*0.5+5)
-            ctx.fillText("15 000 000", graphe["x"]-8, graphe["y"]-graphe["h"]*0.5+5)
+            ctx.strokeText("15 000 000", (graphe["x"]-8)*gs, (graphe["y"]-graphe["h"]*0.5+5)*gs)
+            ctx.fillText("15 000 000", (graphe["x"]-8)*gs, (graphe["y"]-graphe["h"]*0.5+5)*gs)
         }
     } else if (dest_dpt > -1) {
         if (calendrier === "jour") {
-            ctx.strokeText(format(""+(departements[dest_dpt]["leg"]/2)), graphe["x"]-8, graphe["y"]-graphe["h"]*0.5+5)
-            ctx.fillText(format(""+(departements[dest_dpt]["leg"]/2)), graphe["x"]-8, graphe["y"]-graphe["h"]*0.5+5)
+            ctx.strokeText(format(""+(departements[dest_dpt]["leg"]/2)), (graphe["x"]-8)*gs, (graphe["y"]-graphe["h"]*0.5+5)*gs)
+            ctx.fillText(format(""+(departements[dest_dpt]["leg"]/2)), (graphe["x"]-8)*gs, (graphe["y"]-graphe["h"]*0.5+5)*gs)
         } else if (calendrier === "semaine") {
-            ctx.strokeText(format(""+(7*departements[dest_dpt]["leg"]/2)), graphe["x"]-8, graphe["y"]-graphe["h"]*0.5+5)
-            ctx.fillText(format(""+(7*departements[dest_dpt]["leg"]/2)), graphe["x"]-8, graphe["y"]-graphe["h"]*0.5+5)
+            ctx.strokeText(format(""+(7*departements[dest_dpt]["leg"]/2)), (graphe["x"]-8)*gs, (graphe["y"]-graphe["h"]*0.5+5)*gs)
+            ctx.fillText(format(""+(7*departements[dest_dpt]["leg"]/2)), (graphe["x"]-8)*gs, (graphe["y"]-graphe["h"]*0.5+5)*gs)
         } else if (calendrier === "mois") {
-            ctx.strokeText(format(""+(30*departements[dest_dpt]["leg"]/2)), graphe["x"]-8, graphe["y"]-graphe["h"]*0.5+5)
-            ctx.fillText(format(""+(30*departements[dest_dpt]["leg"]/2)), graphe["x"]-8, graphe["y"]-graphe["h"]*0.5+5)
+            ctx.strokeText(format(""+(30*departements[dest_dpt]["leg"]/2)), (graphe["x"]-8)*gs, (graphe["y"]-graphe["h"]*0.5+5)*gs)
+            ctx.fillText(format(""+(30*departements[dest_dpt]["leg"]/2)), (graphe["x"]-8)*gs, (graphe["y"]-graphe["h"]*0.5+5)*gs)
         }
     } else if (orig_dpt > -1) {
         if (calendrier === "jour") {
-            ctx.strokeText(format(""+(legendes[orig_dpt]*2.5)), graphe["x"]-8, graphe["y"]-graphe["h"]*0.5+5)
-            ctx.fillText(format(""+(legendes[orig_dpt]*2.5)), graphe["x"]-8, graphe["y"]-graphe["h"]*0.5+5)
+            ctx.strokeText(format(""+(legendes[orig_dpt]*2.5)), (graphe["x"]-8)*gs, (graphe["y"]-graphe["h"]*0.5+5)*gs)
+            ctx.fillText(format(""+(legendes[orig_dpt]*2.5)), (graphe["x"]-8)*gs, (graphe["y"]-graphe["h"]*0.5+5)*gs)
         } else if (calendrier === "semaine") {
-            ctx.strokeText(format(""+(7*legendes[orig_dpt]*2.5)), graphe["x"]-8, graphe["y"]-graphe["h"]*0.5+5)
-            ctx.fillText(format(""+(7*legendes[orig_dpt]*2.5)), graphe["x"]-8, graphe["y"]-graphe["h"]*0.5+5)
+            ctx.strokeText(format(""+(7*legendes[orig_dpt]*2.5)), (graphe["x"]-8)*gs, (graphe["y"]-graphe["h"]*0.5+5)*gs)
+            ctx.fillText(format(""+(7*legendes[orig_dpt]*2.5)), (graphe["x"]-8)*gs, (graphe["y"]-graphe["h"]*0.5+5)*gs)
         } else if (calendrier === "mois") {
-            ctx.strokeText(format(""+(30*legendes[orig_dpt]*2.5)), graphe["x"]-8, graphe["y"]-graphe["h"]*0.5+5)
-            ctx.fillText(format(""+(30*legendes[orig_dpt]*2.5)), graphe["x"]-8, graphe["y"]-graphe["h"]*0.5+5)
+            ctx.strokeText(format(""+(30*legendes[orig_dpt]*2.5)), (graphe["x"]-8)*gs, (graphe["y"]-graphe["h"]*0.5+5)*gs)
+            ctx.fillText(format(""+(30*legendes[orig_dpt]*2.5)), (graphe["x"]-8)*gs, (graphe["y"]-graphe["h"]*0.5+5)*gs)
         }
     }
 
     if (meteo) {
         ctx.strokeStyle = "#ffa500"
-        ctx.strokeText("0", graphe["x"]-8, graphe["y"]-graphe["h"]*0.1+5)
-        ctx.strokeText("25", graphe["x"]-8, graphe["y"]-graphe["h"]*0.1-(25/30)*graphe["h"]+5)
+        ctx.strokeText("0", (graphe["x"]-8)*gs, (graphe["y"]-graphe["h"]*0.1+5)*gs)
+        ctx.strokeText("25", (graphe["x"]-8)*gs, (graphe["y"]-graphe["h"]*0.1-(25/30)*graphe["h"]+5)*gs)
         ctx.textAlign = "center"
-        ctx.font = "14px Arial"
-        ctx.strokeText("température (°C)", graphe["x"], graphe["y"]-graphe["h"]*1.15-26)
+        ctx.font = "" + (14*gs) + "px Arial"
+        ctx.strokeText("température (°C)", graphe["x"]*gs, (graphe["y"]-graphe["h"]*1.15-26)*gs)
         ctx.strokeStyle = "#ffffff"
     }
 
     ctx.textAlign = "left"
     ctx.fillStyle = "#eeeeee"
-    ctx.font = "24px Arial"
+    ctx.font = "" + (24*gs) + "px Arial"
 
     if (dest_dpt == -1) {
         if (calendrier === "jour") {
-            ctx.strokeText("Répartition des touristes sur la région ce jour-là :", 30, offset_y-10)
-            ctx.fillText("Répartition des touristes sur la région ce jour-là :", 30, offset_y-10)
+            ctx.strokeText("Répartition des touristes sur la région ce jour-là :", 30*gs, (offset_y-10)*gs)
+            ctx.fillText("Répartition des touristes sur la région ce jour-là :", 30*gs, (offset_y-10)*gs)
         } else if (calendrier === "semaine") {
-            ctx.strokeText("Répartition des touristes sur la région cette semaine-là :", 30, offset_y-10)
-            ctx.fillText("Répartition des touristes sur la région cette semaine-là :", 30, offset_y-10)
+            ctx.strokeText("Répartition des touristes sur la région cette semaine-là :", 30*gs, (offset_y-10)*gs)
+            ctx.fillText("Répartition des touristes sur la région cette semaine-là :", 30*gs, (offset_y-10)*gs)
         } else if (calendrier === "mois") {
-            ctx.strokeText("Répartition des touristes sur la région ce mois-là :", 30, offset_y-10)
-            ctx.fillText("Répartition des touristes sur la région ce mois-là :", 30, offset_y-10)
+            ctx.strokeText("Répartition des touristes sur la région ce mois-là :", 30*gs, (offset_y-10)*gs)
+            ctx.fillText("Répartition des touristes sur la région ce mois-là :", 30*gs, (offset_y-10)*gs)
         }
     }
 
     ctx.textAlign = "left"
-    ctx.font = "24px Arial"
+    ctx.font = "" + (24*gs) + "px Arial"
 
     if (xy_icone_monde.w == 100) {
         if (dest_dpt == -1) {
-            ctx.strokeText("Provenance des touristes originaires de l'étranger ayant nuité en Occitanie :", 940, offset_y-10)
-            ctx.fillText("Provenance des touristes originaires de l'étranger ayant nuité en Occitanie :", 940, offset_y-10)
+            ctx.strokeText("Provenance des touristes originaires de l'étranger ayant nuité en Occitanie :", 940*gs, (offset_y-10)*gs)
+            ctx.fillText("Provenance des touristes originaires de l'étranger ayant nuité en Occitanie :", 940*gs, (offset_y-10)*gs)
         } else {
-            ctx.strokeText("Provenance des touristes originaires de l'étranger ayant nuité "  + departements[dest_dpt].formule + " :", 940, offset_y-10)
-            ctx.fillText("Provenance des touristes originaires de l'étranger ayant nuité " + departements[dest_dpt].formule + " :", 940, offset_y-10)
+            ctx.strokeText("Provenance des touristes originaires de l'étranger ayant nuité "  + departements[dest_dpt].formule + " :", 940*gs, (offset_y-10)*gs)
+            ctx.fillText("Provenance des touristes originaires de l'étranger ayant nuité " + departements[dest_dpt].formule + " :", 940*gs, (offset_y-10)*gs)
 
         }
     } else {
         if (dest_dpt == -1) {
-            ctx.strokeText("Provenance des touristes ayant nuité en Occitanie :", 940, offset_y-10)
-            ctx.fillText("Provenance des touristes ayant nuité en Occitanie :", 940, offset_y-10)
+            ctx.strokeText("Provenance des touristes ayant nuité en Occitanie :", 940*gs, (offset_y-10)*gs)
+            ctx.fillText("Provenance des touristes ayant nuité en Occitanie :", 940*gs, (offset_y-10)*gs)
         } else {
-            ctx.strokeText("Provenance des touristes ayant nuité " + departements[dest_dpt].formule + " :", 940, offset_y-10)
-            ctx.fillText("Provenance des touristes ayant nuité " + departements[dest_dpt].formule + " :", 940, offset_y-10)
+            ctx.strokeText("Provenance des touristes ayant nuité " + departements[dest_dpt].formule + " :", 940*gs, (offset_y-10)*gs)
+            ctx.fillText("Provenance des touristes ayant nuité " + departements[dest_dpt].formule + " :", 940*gs, (offset_y-10)*gs)
         }
     }
 
     if (xy_icone_monde.w < 100) {
-        if ( (xyMouse.x - xy_icone_monde.x)**2 + (xyMouse.y - xy_icone_monde.y)**2 < (xy_icone_monde.w/2)**2) {
+        if ( (xyMouse.x - xy_icone_monde.x*gs)**2 + (xyMouse.y - xy_icone_monde.y*gs)**2 < (xy_icone_monde.w*gs/2)**2) {
             xy_icone_monde.w = Math.min(75, xy_icone_monde.w+2.5)
             xy_icone_monde.h = xy_icone_monde.w
         } else {
@@ -1116,8 +1123,8 @@ function animate() {
         }
     }
 
-    ctx.drawImage(img_icone_france, xy_icone_france.x - xy_icone_france.w/2, xy_icone_france.y - xy_icone_france.h/2, xy_icone_france.w, xy_icone_france.h)
-    ctx.drawImage(img_icone_monde,  xy_icone_monde.x  - xy_icone_monde.w/2,  xy_icone_monde.y  - xy_icone_monde.h/2,  xy_icone_monde.w,  xy_icone_monde.h )
+    ctx.drawImage(img_icone_france, (xy_icone_france.x - xy_icone_france.w/2)*gs, (xy_icone_france.y - xy_icone_france.h/2)*gs, xy_icone_france.w*gs, xy_icone_france.h*gs)
+    ctx.drawImage(img_icone_monde,  (xy_icone_monde.x  - xy_icone_monde.w/2)*gs,  (xy_icone_monde.y  - xy_icone_monde.h/2)*gs,  xy_icone_monde.w*gs,  xy_icone_monde.h*gs )
 
     // Affichage de la France entière
     if (xy_icone_france.w == 100) {
@@ -1180,24 +1187,24 @@ function animate() {
             ctx_c.drawImage(imgs_dep_bleu[orig_dpt], 0, 0)
             ctx_c.globalAlpha = 1
         }
-        ctx.drawImage(canv, offset_x_prov, offset_y_prov, w_map, h_map)
+        ctx.drawImage(canv, offset_x_prov*gs, offset_y_prov*gs, w_map*gs, h_map*gs)
         delete canv
-        ctx.drawImage(img_france_vierge, offset_x_prov, offset_y_prov, w_map, h_map)
+        ctx.drawImage(img_france_vierge, offset_x_prov*gs, offset_y_prov*gs, w_map*gs, h_map*gs)
 
     } else if (xy_icone_monde.w == 100) {
 //        ctx.drawImage(img_fr, offset_x_prov+60+100, offset_y_prov+45*0+80)
-        ctx.drawImage(img_de, offset_x_prov+60+100, offset_y_prov+48*1+60)
-        ctx.drawImage(img_it, offset_x_prov+60+100, offset_y_prov+48*2+60)
-        ctx.drawImage(img_gb, offset_x_prov+60+100, offset_y_prov+48*3+60)
-        ctx.drawImage(img_nl, offset_x_prov+60+100, offset_y_prov+48*4+60)
-        ctx.drawImage(img_espt, offset_x_prov+60+50, offset_y_prov+48*5+60)
-        ctx.drawImage(img_belu, offset_x_prov+60+50, offset_y_prov+48*6+60)
-        ctx.drawImage(img_dkseno, offset_x_prov+60, offset_y_prov+48*7+60)
-        ctx.drawImage(img_us, offset_x_prov+60+100, offset_y_prov+48*8+60)
-        ctx.drawImage(img_ch, offset_x_prov+60+100, offset_y_prov+48*9+60)
+        ctx.drawImage(img_de, (offset_x_prov+60+100)*gs, (offset_y_prov+48*1+60)*gs,48*gs,36*gs)
+        ctx.drawImage(img_it, (offset_x_prov+60+100)*gs, (offset_y_prov+48*2+60)*gs,48*gs,36*gs)
+        ctx.drawImage(img_gb, (offset_x_prov+60+100)*gs, (offset_y_prov+48*3+60)*gs,48*gs,36*gs)
+        ctx.drawImage(img_nl, (offset_x_prov+60+100)*gs, (offset_y_prov+48*4+60)*gs,48*gs,36*gs)
+        ctx.drawImage(img_espt, (offset_x_prov+60+50)*gs, (offset_y_prov+48*5+60)*gs,98*gs,36*gs)
+        ctx.drawImage(img_belu, (offset_x_prov+60+50)*gs, (offset_y_prov+48*6+60)*gs,98*gs,36*gs)
+        ctx.drawImage(img_dkseno, (offset_x_prov+60)*gs, (offset_y_prov+48*7+60)*gs,148*gs,36*gs)
+        ctx.drawImage(img_us, (offset_x_prov+60+100)*gs, (offset_y_prov+48*8+60)*gs,48*gs,36*gs)
+        ctx.drawImage(img_ch, (offset_x_prov+60+100)*gs, (offset_y_prov+48*9+60)*gs,48*gs,36*gs)
         ctx.textAlign = "right"
-        ctx.strokeText("Autres :", offset_x_prov+98+100, offset_y_prov+48*10+60+26)
-        ctx.fillText("Autres :", offset_x_prov+98+100, offset_y_prov+48*10+60+26)
+        ctx.strokeText("Autres :", (offset_x_prov+98+100)*gs, (offset_y_prov+48*10+60+26)*gs)
+        ctx.fillText("Autres :", (offset_x_prov+98+100)*gs, (offset_y_prov+48*10+60+26)*gs)
 
         vols_totaux = []
         if (dest_dpt == -1) {
@@ -1209,19 +1216,19 @@ function animate() {
                     }
                     vols_totaux.push(vol_total)
                     ctx.beginPath()
-                    ctx.moveTo(offset_x_prov+65+150, offset_y_prov+48*mapping_pays[i]+60)
-                    ctx.lineTo(offset_x_prov+65+150+vol_total*0.005, offset_y_prov+48*mapping_pays[i]+60)
-                    ctx.lineTo(offset_x_prov+65+150+vol_total*0.005, offset_y_prov+48*mapping_pays[i]+60+35)
-                    ctx.lineTo(offset_x_prov+65+150, offset_y_prov+48*mapping_pays[i]+60+35)
-                    ctx.lineTo(offset_x_prov+65+150, offset_y_prov+48*mapping_pays[i]+60)
+                    ctx.moveTo(gs*(offset_x_prov+65+150), (offset_y_prov+48*mapping_pays[i]+60)*gs)
+                    ctx.lineTo(gs*(offset_x_prov+65+150+vol_total*0.005), (offset_y_prov+48*mapping_pays[i]+60)*gs)
+                    ctx.lineTo(gs*(offset_x_prov+65+150+vol_total*0.005), (offset_y_prov+48*mapping_pays[i]+60+35)*gs)
+                    ctx.lineTo(gs*(offset_x_prov+65+150), (offset_y_prov+48*mapping_pays[i]+60+35)*gs)
+                    ctx.lineTo(gs*(offset_x_prov+65+150), (offset_y_prov+48*mapping_pays[i]+60)*gs)
                     ctx.stroke()
                     ctx.fillStyle = colors_pays[i]
                     ctx.fill()
                     ctx.fillStyle = "#ffffff"
                     ctx.strokeStyle = "#ffffff"
                     ctx.textAlign = "left"
-                    ctx.strokeText(format(""+vol_total), offset_x_prov+65+150+vol_total*0.005+5, offset_y_prov+48*mapping_pays[i]+60+24)
-                    ctx.fillText(format(""+vol_total), offset_x_prov+65+150+vol_total*0.005+5, offset_y_prov+48*mapping_pays[i]+60+24)
+                    ctx.strokeText(format(""+vol_total), (offset_x_prov+65+150+vol_total*0.005+5)*gs, (offset_y_prov+48*mapping_pays[i]+60+24)*gs)
+                    ctx.fillText(format(""+vol_total), (offset_x_prov+65+150+vol_total*0.005+5)*gs, (offset_y_prov+48*mapping_pays[i]+60+24)*gs)
                 }
             } else if (calendrier === "semaine") {
                 for (let i in mapping_pays) {
@@ -1244,19 +1251,19 @@ function animate() {
                     }
                     vols_totaux.push(vol_total)
                     ctx.beginPath()
-                    ctx.moveTo(offset_x_prov+65+150, offset_y_prov+48*mapping_pays[i]+60)
-                    ctx.lineTo(offset_x_prov+65+150+vol_total*0.005/7, offset_y_prov+48*mapping_pays[i]+60)
-                    ctx.lineTo(offset_x_prov+65+150+vol_total*0.005/7, offset_y_prov+48*mapping_pays[i]+60+35)
-                    ctx.lineTo(offset_x_prov+65+150, offset_y_prov+48*mapping_pays[i]+60+35)
-                    ctx.lineTo(offset_x_prov+65+150, offset_y_prov+48*mapping_pays[i]+60)
+                    ctx.moveTo(gs*(offset_x_prov+65+150), (offset_y_prov+48*mapping_pays[i]+60)*gs)
+                    ctx.lineTo(gs*(offset_x_prov+65+150+vol_total*0.005/7), (offset_y_prov+48*mapping_pays[i]+60)*gs)
+                    ctx.lineTo(gs*(offset_x_prov+65+150+vol_total*0.005/7), (offset_y_prov+48*mapping_pays[i]+60+35)*gs)
+                    ctx.lineTo(gs*(offset_x_prov+65+150), (offset_y_prov+48*mapping_pays[i]+60+35)*gs)
+                    ctx.lineTo(gs*(offset_x_prov+65+150), (offset_y_prov+48*mapping_pays[i]+60)*gs)
                     ctx.stroke()
                     ctx.fillStyle = colors_pays[i]
                     ctx.fill()
                     ctx.fillStyle = "#ffffff"
                     ctx.strokeStyle = "#ffffff"
                     ctx.textAlign = "left"
-                    ctx.strokeText(format(""+vol_total), offset_x_prov+65+150+vol_total*0.005/7+5, offset_y_prov+48*mapping_pays[i]+60+24)
-                    ctx.fillText(format(""+vol_total), offset_x_prov+65+150+vol_total*0.005/7+5, offset_y_prov+48*mapping_pays[i]+60+24)
+                    ctx.strokeText(format(""+vol_total), (offset_x_prov+65+150+vol_total*0.005/7+5)*gs, (offset_y_prov+48*mapping_pays[i]+60+24)*gs)
+                    ctx.fillText(format(""+vol_total), (offset_x_prov+65+150+vol_total*0.005/7+5)*gs, (offset_y_prov+48*mapping_pays[i]+60+24)*gs)
                 }
             } else if (calendrier === "mois") {
                 for (let i in mapping_pays) {
@@ -1268,19 +1275,19 @@ function animate() {
                     }
                     vols_totaux.push(vol_total)
                     ctx.beginPath()
-                    ctx.moveTo(offset_x_prov+65+150, offset_y_prov+48*mapping_pays[i]+60)
-                    ctx.lineTo(offset_x_prov+65+150+vol_total*0.005/30, offset_y_prov+48*mapping_pays[i]+60)
-                    ctx.lineTo(offset_x_prov+65+150+vol_total*0.005/30, offset_y_prov+48*mapping_pays[i]+60+35)
-                    ctx.lineTo(offset_x_prov+65+150, offset_y_prov+48*mapping_pays[i]+60+35)
-                    ctx.lineTo(offset_x_prov+65+150, offset_y_prov+48*mapping_pays[i]+60)
+                    ctx.moveTo(gs*(offset_x_prov+65+150), (offset_y_prov+48*mapping_pays[i]+60)*gs)
+                    ctx.lineTo(gs*(offset_x_prov+65+150+vol_total*0.005/30), (offset_y_prov+48*mapping_pays[i]+60)*gs)
+                    ctx.lineTo(gs*(offset_x_prov+65+150+vol_total*0.005/30), (offset_y_prov+48*mapping_pays[i]+60+35)*gs)
+                    ctx.lineTo(gs*(offset_x_prov+65+150), (offset_y_prov+48*mapping_pays[i]+60+35)*gs)
+                    ctx.lineTo(gs*(offset_x_prov+65+150), (offset_y_prov+48*mapping_pays[i]+60)*gs)
                     ctx.stroke()
                     ctx.fillStyle = colors_pays[i]
                     ctx.fill()
                     ctx.fillStyle = "#ffffff"
                     ctx.strokeStyle = "#ffffff"
                     ctx.textAlign = "left"
-                    ctx.strokeText(format(""+vol_total), offset_x_prov+65+150+vol_total*0.005/30+5, offset_y_prov+48*mapping_pays[i]+60+24)
-                    ctx.fillText(format(""+vol_total), offset_x_prov+65+150+vol_total*0.005/30+5, offset_y_prov+48*mapping_pays[i]+60+24)
+                    ctx.strokeText(format(""+vol_total), (offset_x_prov+65+150+vol_total*0.005/30+5)*gs, (offset_y_prov+48*mapping_pays[i]+60+24)*gs)
+                    ctx.fillText(format(""+vol_total), (offset_x_prov+65+150+vol_total*0.005/30+5)*gs, (offset_y_prov+48*mapping_pays[i]+60+24)*gs)
                 }
             }
         } else {
@@ -1289,19 +1296,19 @@ function animate() {
                     vol_total = departements[dest_dpt].volume[day][parseInt(i)-1]
                     vols_totaux.push(vol_total)
                     ctx.beginPath()
-                    ctx.moveTo(offset_x_prov+65+150, offset_y_prov+48*mapping_pays[i]+60)
-                    ctx.lineTo(offset_x_prov+65+150+vol_total*0.010, offset_y_prov+48*mapping_pays[i]+60)
-                    ctx.lineTo(offset_x_prov+65+150+vol_total*0.010, offset_y_prov+48*mapping_pays[i]+60+35)
-                    ctx.lineTo(offset_x_prov+65+150, offset_y_prov+48*mapping_pays[i]+60+35)
-                    ctx.lineTo(offset_x_prov+65+150, offset_y_prov+48*mapping_pays[i]+60)
+                    ctx.moveTo(gs*(offset_x_prov+65+150), (offset_y_prov+48*mapping_pays[i]+60)*gs)
+                    ctx.lineTo(gs*(offset_x_prov+65+150+vol_total*0.010), (offset_y_prov+48*mapping_pays[i]+60)*gs)
+                    ctx.lineTo(gs*(offset_x_prov+65+150+vol_total*0.010), (offset_y_prov+48*mapping_pays[i]+60+35)*gs)
+                    ctx.lineTo(gs*(offset_x_prov+65+150), (offset_y_prov+48*mapping_pays[i]+60+35)*gs)
+                    ctx.lineTo(gs*(offset_x_prov+65+150), (offset_y_prov+48*mapping_pays[i]+60)*gs)
                     ctx.stroke()
                     ctx.fillStyle = colors_pays[i]
                     ctx.fill()
                     ctx.fillStyle = "#ffffff"
                     ctx.strokeStyle = "#ffffff"
                     ctx.textAlign = "left"
-                    ctx.strokeText(format(""+vol_total), offset_x_prov+65+150+vol_total*0.010+5, offset_y_prov+48*mapping_pays[i]+60+24)
-                    ctx.fillText(format(""+vol_total), offset_x_prov+65+150+vol_total*0.010+5, offset_y_prov+48*mapping_pays[i]+60+24)
+                    ctx.strokeText(format(""+vol_total), (offset_x_prov+65+150+vol_total*0.010+5)*gs, (offset_y_prov+48*mapping_pays[i]+60+24)*gs)
+                    ctx.fillText(format(""+vol_total), (offset_x_prov+65+150+vol_total*0.010+5)*gs, (offset_y_prov+48*mapping_pays[i]+60+24)*gs)
                 }
             } else if (calendrier === "semaine") {
                 for (let i in mapping_pays) {
@@ -1320,19 +1327,19 @@ function animate() {
                     }
                     vols_totaux.push(vol_total)
                     ctx.beginPath()
-                    ctx.moveTo(offset_x_prov+65+150, offset_y_prov+48*mapping_pays[i]+60)
-                    ctx.lineTo(offset_x_prov+65+150+vol_total*0.010/7, offset_y_prov+48*mapping_pays[i]+60)
-                    ctx.lineTo(offset_x_prov+65+150+vol_total*0.010/7, offset_y_prov+48*mapping_pays[i]+60+35)
-                    ctx.lineTo(offset_x_prov+65+150, offset_y_prov+48*mapping_pays[i]+60+35)
-                    ctx.lineTo(offset_x_prov+65+150, offset_y_prov+48*mapping_pays[i]+60)
+                    ctx.moveTo(gs*(offset_x_prov+65+150), (offset_y_prov+48*mapping_pays[i]+60)*gs)
+                    ctx.lineTo(gs*(offset_x_prov+65+150+vol_total*0.010/7), (offset_y_prov+48*mapping_pays[i]+60)*gs)
+                    ctx.lineTo(gs*(offset_x_prov+65+150+vol_total*0.010/7), (offset_y_prov+48*mapping_pays[i]+60+35)*gs)
+                    ctx.lineTo(gs*(offset_x_prov+65+150), (offset_y_prov+48*mapping_pays[i]+60+35)*gs)
+                    ctx.lineTo(gs*(offset_x_prov+65+150), (offset_y_prov+48*mapping_pays[i]+60)*gs)
                     ctx.stroke()
                     ctx.fillStyle = colors_pays[i]
                     ctx.fill()
                     ctx.fillStyle = "#ffffff"
                     ctx.strokeStyle = "#ffffff"
                     ctx.textAlign = "left"
-                    ctx.strokeText(format(""+vol_total), offset_x_prov+65+150+vol_total*0.010/7+5, offset_y_prov+48*mapping_pays[i]+60+24)
-                    ctx.fillText(format(""+vol_total), offset_x_prov+65+150+vol_total*0.010/7+5, offset_y_prov+48*mapping_pays[i]+60+24)
+                    ctx.strokeText(format(""+vol_total), (offset_x_prov+65+150+vol_total*0.010/7+5)*gs, (offset_y_prov+48*mapping_pays[i]+60+24)*gs)
+                    ctx.fillText(format(""+vol_total), (offset_x_prov+65+150+vol_total*0.010/7+5)*gs, (offset_y_prov+48*mapping_pays[i]+60+24)*gs)
 
                 }
             } else if (calendrier === "mois") {
@@ -1343,19 +1350,19 @@ function animate() {
                     }
                     vols_totaux.push(vol_total)
                     ctx.beginPath()
-                    ctx.moveTo(offset_x_prov+65+150, offset_y_prov+48*mapping_pays[i]+60)
-                    ctx.lineTo(offset_x_prov+65+150+vol_total*0.010/30, offset_y_prov+48*mapping_pays[i]+60)
-                    ctx.lineTo(offset_x_prov+65+150+vol_total*0.010/30, offset_y_prov+48*mapping_pays[i]+60+35)
-                    ctx.lineTo(offset_x_prov+65+150, offset_y_prov+48*mapping_pays[i]+60+35)
-                    ctx.lineTo(offset_x_prov+65+150, offset_y_prov+48*mapping_pays[i]+60)
+                    ctx.moveTo(gs*(offset_x_prov+65+150), (offset_y_prov+48*mapping_pays[i]+60)*gs)
+                    ctx.lineTo(gs*(offset_x_prov+65+150+vol_total*0.010/30), (offset_y_prov+48*mapping_pays[i]+60)*gs)
+                    ctx.lineTo(gs*(offset_x_prov+65+150+vol_total*0.010/30), (offset_y_prov+48*mapping_pays[i]+60+35)*gs)
+                    ctx.lineTo(gs*(offset_x_prov+65+150), (offset_y_prov+48*mapping_pays[i]+60+35)*gs)
+                    ctx.lineTo(gs*(offset_x_prov+65+150), (offset_y_prov+48*mapping_pays[i]+60)*gs)
                     ctx.stroke()
                     ctx.fillStyle = colors_pays[i]
                     ctx.fill()
                     ctx.fillStyle = "#ffffff"
                     ctx.strokeStyle = "#ffffff"
                     ctx.textAlign = "left"
-                    ctx.strokeText(format(""+vol_total), offset_x_prov+65+150+vol_total*0.010/30+5, offset_y_prov+48*mapping_pays[i]+60+24)
-                    ctx.fillText(format(""+vol_total), offset_x_prov+65+150+vol_total*0.010/30+5, offset_y_prov+48*mapping_pays[i]+60+24)
+                    ctx.strokeText(format(""+vol_total), (offset_x_prov+65+150+vol_total*0.010/30+5)*gs, (offset_y_prov+48*mapping_pays[i]+60+24)*gs)
+                    ctx.fillText(format(""+vol_total), (offset_x_prov+65+150+vol_total*0.010/30+5)*gs, (offset_y_prov+48*mapping_pays[i]+60+24)*gs)
                 }
             }
         }
@@ -1368,10 +1375,10 @@ function animate() {
         cumul = 0
         for (let i = 0; i < vols_totaux.length; i++) {
             ctx.beginPath()
-            ctx.moveTo(camembert.x, camembert.y)
-            ctx.lineTo(camembert.x+camembert.r*Math.cos(cumul), camembert.y+camembert.r*Math.sin(cumul))
-            ctx.arc(camembert.x, camembert.y, camembert.r, cumul, cumul+2*Math.PI*vols_totaux[i]/total_total)
-            ctx.lineTo(camembert.x, camembert.y)
+            ctx.moveTo(camembert.x*gs, camembert.y*gs)
+            ctx.lineTo((camembert.x+camembert.r*Math.cos(cumul))*gs, (camembert.y+camembert.r*Math.sin(cumul))*gs)
+            ctx.arc(camembert.x*gs, camembert.y*gs, camembert.r*gs, cumul, cumul+2*Math.PI*vols_totaux[i]/total_total)
+            ctx.lineTo(camembert.x*gs, camembert.y*gs)
             ctx.stroke()
             ctx.fillStyle = colors_pays_ordered[i]
             ctx.fill()
@@ -1384,11 +1391,11 @@ function animate() {
     of = 50
 
     ctx.beginPath()
-    ctx.moveTo(offset_x_prov + w_map + 40, offset_y_prov+of)
-    ctx.lineTo(offset_x_prov + w_map + 40, offset_y_prov+h_map-250-of)
-    ctx.lineTo(offset_x_prov + w_map + 340, offset_y_prov+h_map-250-of)
-    ctx.lineTo(offset_x_prov + w_map + 340, offset_y_prov+of)
-    ctx.lineTo(offset_x_prov + w_map + 40, offset_y_prov+of)
+    ctx.moveTo(gs*(offset_x_prov + w_map + 40), (offset_y_prov+of)*gs)
+    ctx.lineTo(gs*(offset_x_prov + w_map + 40), (offset_y_prov+h_map-250-of)*gs)
+    ctx.lineTo(gs*(offset_x_prov + w_map + 340), (offset_y_prov+h_map-250-of)*gs)
+    ctx.lineTo(gs*(offset_x_prov + w_map + 340), (offset_y_prov+of)*gs)
+    ctx.lineTo(gs*(offset_x_prov + w_map + 40), (offset_y_prov+of)*gs)
     ctx.strokeStyle = "#222222"
     ctx.stroke()
     ctx.fillStyle = "#444444"
@@ -1397,155 +1404,155 @@ function animate() {
     ctx.strokeStyle = "#ffffff"
     ctx.fillStyle = "#eeeeee"
     ctx.textAlign = "center"
-    ctx.font = "22px Arial"
+    ctx.font = "" + (22*gs) + "px Arial"
 
-    ctx.strokeText("Le tourisme en 2018 en", offset_x_prov + w_map + 40 +150, offset_y_prov+38*1+of)
-    ctx.fillText("Le tourisme en 2018 en", offset_x_prov + w_map + 40 +150, offset_y_prov+38*1+of)
+    ctx.strokeText("Le tourisme en 2018 en", (offset_x_prov + w_map + 40 +150)*gs, (offset_y_prov+38*1+of)*gs)
+    ctx.fillText("Le tourisme en 2018 en", (offset_x_prov + w_map + 40 +150)*gs, (offset_y_prov+38*1+of)*gs)
 //    ctx.fillText("L'année 2018 en", offset_x_prov + w_map + 40 + 150, offset_y_prov+40*1+of)
 
-    ctx.strokeText("quelques chiffres clé :", offset_x_prov + w_map + 40 + 150, offset_y_prov+38*2-10+of)
-    ctx.fillText("quelques chiffres clé :", offset_x_prov + w_map + 40 + 150, offset_y_prov+38*2-10+of)
+    ctx.strokeText("quelques chiffres clé :", (offset_x_prov + w_map + 40 + 150)*gs, (offset_y_prov+38*2-10+of)*gs)
+    ctx.fillText("quelques chiffres clé :", (offset_x_prov + w_map + 40 + 150)*gs, (offset_y_prov+38*2-10+of)*gs)
 
     ctx.textAlign = "left"
-    ctx.font = "18px Arial"
-    ctx.strokeText("− 200 millions de nuitées", offset_x_prov + w_map + 40 + 20, offset_y_prov+38*3+of)
-    ctx.fillText("− 200 millions de nuitées", offset_x_prov + w_map + 40 + 20, offset_y_prov+38*3+of)
+    ctx.font = "" + (18*gs) + "px Arial"
+    ctx.strokeText("− 200 millions de nuitées", (offset_x_prov + w_map + 40 + 20)*gs, (offset_y_prov+38*3+of)*gs)
+    ctx.fillText("− 200 millions de nuitées", (offset_x_prov + w_map + 40 + 20)*gs, (offset_y_prov+38*3+of)*gs)
 
-    ctx.strokeText("− 41% de touristes étrangers", offset_x_prov + w_map + 40 + 20, offset_y_prov+38*4+of)
-    ctx.fillText("− 41% de touristes étrangers", offset_x_prov + w_map + 40 + 20, offset_y_prov+38*4+of)
+    ctx.strokeText("− 41% de touristes étrangers", (offset_x_prov + w_map + 40 + 20)*gs, (offset_y_prov+38*4+of)*gs)
+    ctx.fillText("− 41% de touristes étrangers", (offset_x_prov + w_map + 40 + 20)*gs, (offset_y_prov+38*4+of)*gs)
 
-    ctx.strokeText("− 35% des nuitées en juillet-août", offset_x_prov + w_map + 40 + 20, offset_y_prov+38*5+of)
-    ctx.fillText("− 35% des nuitées en juillet-août", offset_x_prov + w_map + 40 + 20, offset_y_prov+38*5+of)
+    ctx.strokeText("− 35% des nuitées en juillet-août", (offset_x_prov + w_map + 40 + 20)*gs, (offset_y_prov+38*5+of)*gs)
+    ctx.fillText("− 35% des nuitées en juillet-août", (offset_x_prov + w_map + 40 + 20)*gs, (offset_y_prov+38*5+of)*gs)
 
-    ctx.strokeText("− 202 événements", offset_x_prov + w_map + 40 + 20, offset_y_prov+38*6+of)
-    ctx.fillText("− 202 événements", offset_x_prov + w_map + 40 + 20, offset_y_prov+38*6+of)
+    ctx.strokeText("− 202 événements", (offset_x_prov + w_map + 40 + 20)*gs, (offset_y_prov+38*6+of)*gs)
+    ctx.fillText("− 202 événements", (offset_x_prov + w_map + 40 + 20)*gs, (offset_y_prov+38*6+of)*gs)
 
 
 //    ctx.strokeText(xyMouse.x, 100, 20)
 //    ctx.strokeText(xyMouse.y, 100, 40)
 
-    if ( (xyMouse.x - xy_icone_event.x)**2 + (xyMouse.y - xy_icone_event.y)**2 < (xy_icone_event.w/2)**2) {
+    if ( (xyMouse.x - xy_icone_event.x*gs)**2 + (xyMouse.y - xy_icone_event.y*gs)**2 < (xy_icone_event.w*gs/2)**2) {
         ctx.strokeStyle = "#ffffff"
         ctx.fillStyle = "#eeeeee"
         ctx.textAlign = "center"
-        ctx.font = "14px Arial"
+        ctx.font = "" + (14*gs) + "px Arial"
         if (event_on) {
-            ctx.strokeText("Ne plus afficher les événements", xy_icone_event.x, xy_icone_event.y-20)
-            ctx.fillText("Ne plus afficher les événements", xy_icone_event.x, xy_icone_event.y-20)
+            ctx.strokeText("Ne plus afficher les événements", xy_icone_event.x*gs, (xy_icone_event.y-20)*gs)
+            ctx.fillText("Ne plus afficher les événements", xy_icone_event.x*gs, (xy_icone_event.y-20)*gs)
         } else {
-            ctx.strokeText("Afficher les événements", xy_icone_event.x, xy_icone_event.y-20)
-            ctx.fillText("Afficher les événements", xy_icone_event.x, xy_icone_event.y-20)
+            ctx.strokeText("Afficher les événements", xy_icone_event.x*gs, (xy_icone_event.y-20)*gs)
+            ctx.fillText("Afficher les événements", xy_icone_event.x*gs, (xy_icone_event.y-20)*gs)
         }
-    } else if ( (xyMouse.x - xy_icone_meteo.x)**2 + (xyMouse.y - xy_icone_meteo.y)**2 < (xy_icone_meteo.w/2)**2) {
+    } else if ( (xyMouse.x - xy_icone_meteo.x*gs)**2 + (xyMouse.y - xy_icone_meteo.y*gs)**2 < (xy_icone_meteo.w*gs/2)**2) {
         ctx.strokeStyle = "#ffffff"
         ctx.fillStyle = "#eeeeee"
         ctx.textAlign = "center"
-        ctx.font = "14px Arial"
+        ctx.font = "" + (14*gs) + "px Arial"
         if (meteo) {
-            ctx.strokeText("Ne pas afficher les températures", xy_icone_meteo.x, xy_icone_meteo.y+30)
-            ctx.fillText("Ne pas afficher les températures", xy_icone_meteo.x, xy_icone_meteo.y+30)
+            ctx.strokeText("Ne pas afficher les températures", xy_icone_meteo.x*gs, (xy_icone_meteo.y+30)*gs)
+            ctx.fillText("Ne pas afficher les températures", xy_icone_meteo.x*gs, (xy_icone_meteo.y+30)*gs)
         } else {
-            ctx.fillText("Afficher les températures", xy_icone_meteo.x, xy_icone_meteo.y+30)
+            ctx.fillText("Afficher les températures", xy_icone_meteo.x*gs, (xy_icone_meteo.y+30)*gs)
         }
-    } else if ( (xyMouse.x - xy_icone_event.x)**2 + (xyMouse.y - xy_icone_event.y)**2 < (xy_icone_event.w/2)**2) {
+    } else if ( (xyMouse.x - xy_icone_event.x*gs)**2 + (xyMouse.y - xy_icone_event.y*gs)**2 < (xy_icone_event.w*gs/2)**2) {
 
-    } else if ( (xyMouse.x - xy_icone_meteo.x + 1.25*xy_icone_meteo.w)**2 + (xyMouse.y - xy_icone_meteo.y)**2 < (xy_icone_meteo.w/2)**2) {
+    } else if ( (xyMouse.x - (xy_icone_meteo.x + 1.25*xy_icone_meteo.w)*gs)**2 + (xyMouse.y - xy_icone_meteo.y*gs)**2 < (xy_icone_meteo.w*gs/2)**2) {
         ctx.strokeStyle = "#ffffff"
         ctx.fillStyle = "#eeeeee"
         ctx.textAlign = "center"
-        ctx.font = "14px Arial"
-        ctx.strokeText("Afficher par mois", xy_icone_meteo.x - 1.25*xy_icone_meteo.w, xy_icone_meteo.y+30)
-        ctx.fillText("Afficher par mois", xy_icone_meteo.x - 1.25*xy_icone_meteo.w, xy_icone_meteo.y+30)
-    } else if ( (xyMouse.x - xy_icone_meteo.x + 2.50*xy_icone_meteo.w)**2 + (xyMouse.y - xy_icone_meteo.y)**2 < (xy_icone_meteo.w/2)**2) {
+        ctx.font = "" + (14*gs) + "px Arial"
+        ctx.strokeText("Afficher par mois", (xy_icone_meteo.x - 1.25*xy_icone_meteo.w)*gs, (xy_icone_meteo.y+30)*gs)
+        ctx.fillText("Afficher par mois", (xy_icone_meteo.x - 1.25*xy_icone_meteo.w)*gs, (xy_icone_meteo.y+30)*gs)
+    } else if ( (xyMouse.x - (xy_icone_meteo.x + 2.50*xy_icone_meteo.w)*gs)**2 + (xyMouse.y - xy_icone_meteo.y*gs)**2 < (xy_icone_meteo.w*gs/2)**2) {
         ctx.strokeStyle = "#ffffff"
         ctx.fillStyle = "#eeeeee"
         ctx.textAlign = "center"
-        ctx.font = "14px Arial"
-        ctx.strokeText("Afficher par semaine", xy_icone_meteo.x - 2.50*xy_icone_meteo.w, xy_icone_meteo.y+30)
-        ctx.fillText("Afficher par semaine", xy_icone_meteo.x - 2.50*xy_icone_meteo.w, xy_icone_meteo.y+30)
-    } else if ( (xyMouse.x - xy_icone_meteo.x + 3.75*xy_icone_meteo.w)**2 + (xyMouse.y - xy_icone_meteo.y)**2 < (xy_icone_meteo.w/2)**2) {
+        ctx.font = "" + (14*gs) + "px Arial"
+        ctx.strokeText("Afficher par semaine", (xy_icone_meteo.x - 2.50*xy_icone_meteo.w)*gs, (xy_icone_meteo.y+30)*gs)
+        ctx.fillText("Afficher par semaine", (xy_icone_meteo.x - 2.50*xy_icone_meteo.w)*gs, (xy_icone_meteo.y+30)*gs)
+    } else if ( (xyMouse.x - (xy_icone_meteo.x + 3.75*xy_icone_meteo.w)*gs)**2 + (xyMouse.y - xy_icone_meteo.y*gs)**2 < (xy_icone_meteo.w*gs/2)**2) {
         ctx.strokeStyle = "#ffffff"
         ctx.fillStyle = "#eeeeee"
         ctx.textAlign = "center"
-        ctx.font = "14px Arial"
-        ctx.strokeText("Afficher par jour", xy_icone_meteo.x - 3.75*xy_icone_meteo.w, xy_icone_meteo.y+30)
-        ctx.fillText("Afficher par jour", xy_icone_meteo.x - 3.75*xy_icone_meteo.w, xy_icone_meteo.y+30)
-    } else if ( (xyMouse.x - xy_icone_meteo.x - 16.25*xy_icone_meteo.w)**2 + (xyMouse.y - xy_icone_meteo.y)**2 < (xy_icone_meteo.w/2)**2) {
+        ctx.font = "" + (14*gs) + "px Arial"
+        ctx.strokeText("Afficher par jour", (xy_icone_meteo.x - 3.75*xy_icone_meteo.w)*gs, (xy_icone_meteo.y+30)*gs)
+        ctx.fillText("Afficher par jour", (xy_icone_meteo.x - 3.75*xy_icone_meteo.w)*gs, (xy_icone_meteo.y+30)*gs)
+    } else if ( (xyMouse.x - (xy_icone_meteo.x - 16.25*xy_icone_meteo.w)*gs)**2 + (xyMouse.y - xy_icone_meteo.y*gs)**2 < (xy_icone_meteo.w*gs/2)**2) {
         ctx.strokeStyle = "#ffffff"
         ctx.fillStyle = "#eeeeee"
         ctx.textAlign = "center"
-        ctx.font = "14px Arial"
+        ctx.font = "" + (14*gs) + "px Arial"
         if (auto_scroll) {
-            ctx.strokeText("Arrêter le défilement automatique", xy_icone_meteo.x + 16.25*xy_icone_meteo.w, xy_icone_meteo.y+30)
-            ctx.fillText("Arrêter le défilement automatique", xy_icone_meteo.x + 16.25*xy_icone_meteo.w, xy_icone_meteo.y+30)
+            ctx.strokeText("Arrêter le défilement automatique", (xy_icone_meteo.x + 16.25*xy_icone_meteo.w)*gs, (xy_icone_meteo.y+30)*gs)
+            ctx.fillText("Arrêter le défilement automatique", (xy_icone_meteo.x + 16.25*xy_icone_meteo.w)*gs, (xy_icone_meteo.y+30)*gs)
         } else {
-            ctx.strokeText("Activer le défilement automatique", xy_icone_meteo.x + 16.25*xy_icone_meteo.w, xy_icone_meteo.y+30)
-            ctx.fillText("Activer le défilement automatique", xy_icone_meteo.x + 16.25*xy_icone_meteo.w, xy_icone_meteo.y+30)
+            ctx.strokeText("Activer le défilement automatique", (xy_icone_meteo.x + 16.25*xy_icone_meteo.w)*gs, (xy_icone_meteo.y+30)*gs)
+            ctx.fillText("Activer le défilement automatique", (xy_icone_meteo.x + 16.25*xy_icone_meteo.w)*gs, (xy_icone_meteo.y+30)*gs)
         }
     }
 
-    if (etape_histoire == 0 && auto_scroll && (xyMouse.x - xy_icone_meteo.x - 16.25*xy_icone_meteo.w)**2 + (xyMouse.y - xy_icone_meteo.y)**2 >= (xy_icone_meteo.w/2)**2) {
+    if (etape_histoire == 0 && auto_scroll && (xyMouse.x - xy_icone_meteo.x*gs - 16.25*xy_icone_meteo.w*gs)**2 + (xyMouse.y - xy_icone_meteo.y*gs)**2 >= (xy_icone_meteo.w*gs/2)**2) {
         ctx.strokeStyle = "#ffffff"
         ctx.fillStyle = "#eeeeee"
         ctx.textAlign = "center"
-        ctx.font = "14px Arial"
+        ctx.font = "" + (14*gs) + "px Arial"
         ctx.globalAlpha = 0.25+0.75*Math.abs(time%1000-500)/500
-        ctx.strokeText("Cliquer ici pour arrêter le défilement automatique", xy_icone_meteo.x + 16.25*xy_icone_meteo.w, xy_icone_meteo.y+30)
-        ctx.fillText("Cliquer ici pour arrêter le défilement automatique", xy_icone_meteo.x + 16.25*xy_icone_meteo.w, xy_icone_meteo.y+30)
+        ctx.strokeText("Cliquer ici pour arrêter le défilement automatique", (xy_icone_meteo.x + 16.25*xy_icone_meteo.w)*gs, (xy_icone_meteo.y+30)*gs)
+        ctx.fillText("Cliquer ici pour arrêter le défilement automatique", (xy_icone_meteo.x + 16.25*xy_icone_meteo.w)*gs, (xy_icone_meteo.y+30)*gs)
         ctx.globalAlpha = 1
     } else if (etape_histoire == 1) {
-        if (xy_icone_monde.w < 100 && !(xyMouse.x >= offset_x_prov && xyMouse.x <= offset_x_prov+w_map && xyMouse.y >= offset_y_prov && xyMouse.y <= offset_y_prov+h_map)) {
+        if (xy_icone_monde.w < 100 && !(xyMouse.x >= offset_x_prov*gs && xyMouse.x <= (offset_x_prov+w_map)*gs && xyMouse.y >= offset_y_prov*gs && xyMouse.y <= (offset_y_prov+h_map)*gs)) {
             ctx.strokeStyle = "#ffffff"
             ctx.fillStyle = "#eeeeee"
             ctx.textAlign = "center"
-            ctx.font = "15px Arial"
+            ctx.font = "" + (15*gs) + "px Arial"
             ctx.globalAlpha = 0.25+0.75*Math.abs(time%1000-500)/500
-            ctx.strokeText("Cliquer sur un département pour voir la répartition des touristes qui en sont originaires", offset_x_prov+w_map/2, offset_y_prov+h_map/2)
-            ctx.fillText("Cliquer sur un département pour voir la répartition des touristes qui en sont originaires", offset_x_prov+w_map/2, offset_y_prov+h_map/2)
+            ctx.strokeText("Cliquer sur un département pour voir la répartition des touristes qui en sont originaires", (offset_x_prov+w_map/2)*gs, (offset_y_prov+h_map/2)*gs)
+            ctx.fillText("Cliquer sur un département pour voir la répartition des touristes qui en sont originaires", (offset_x_prov+w_map/2)*gs, (offset_y_prov+h_map/2)*gs)
             ctx.globalAlpha = 1
         }
-        if (!auto_scroll && !day_fixe && !(xyMouse.x >= graphe.x && xyMouse.x <= graphe.x + graphe.w && xyMouse.y >= graphe.y - graphe.h && xyMouse.y <= graphe.y)) {
+        if (!auto_scroll && !day_fixe && !(xyMouse.x >= graphe.x*gs && xyMouse.x <= (graphe.x + graphe.w)*gs && xyMouse.y >= (graphe.y - graphe.h)*gs && xyMouse.y <= graphe.y*gs)) {
             ctx.strokeStyle = "#ffffff"
             ctx.fillStyle = "#eeeeee"
             ctx.textAlign = "center"
-            ctx.font = "15px Arial"
+            ctx.font = "" + (15*gs) + "px Arial"
             ctx.globalAlpha = 0.25+0.75*Math.abs(time%1000-500)/500
-            ctx.strokeText("Passer le curseur sur une date pour voir le nombre de nuitées à cette date", graphe.x+graphe.w/2, graphe.y-graphe.h+10)
-            ctx.fillText("Passer le curseur sur une date pour voir le nombre de nuitées à cette date", graphe.x+graphe.w/2, graphe.y-graphe.h+10)
+            ctx.strokeText("Passer le curseur sur une date pour voir le nombre de nuitées à cette date", (graphe.x+graphe.w/2)*gs, (graphe.y-graphe.h+10)*gs)
+            ctx.fillText("Passer le curseur sur une date pour voir le nombre de nuitées à cette date", (graphe.x+graphe.w/2)*gs, (graphe.y-graphe.h+10)*gs)
             ctx.globalAlpha = 1
         }
     } else if (etape_histoire == 2) {
-        if (!(xyMouse.x >= offset_x && xyMouse.x <= offset_x+img_vierge.width*scale && xyMouse.y >= offset_y && xyMouse.y <= offset_y+img_vierge.height*scale)) {
+        if (!(xyMouse.x >= offset_x*gs && xyMouse.x <= (offset_x+img_vierge.width*scale)*gs && xyMouse.y >= offset_y*gs && xyMouse.y <= (offset_y+img_vierge.height*scale)*gs)) {
             ctx.strokeStyle = "#ffffff"
             ctx.fillStyle = "#eeeeee"
             ctx.textAlign = "center"
-            ctx.font = "18px Arial"
+            ctx.font = "" + (18*gs) + "px Arial"
             ctx.globalAlpha = 0.25+0.75*Math.abs(time%1000-500)/500
-            ctx.strokeText("Cliquer sur un département pour voir la provenance des touristes", offset_x+img_vierge.width*scale/2, offset_y+15)
-            ctx.fillText("Cliquer sur un département pour voir la provenance des touristes", offset_x+img_vierge.width*scale/2, offset_y+15)
+            ctx.strokeText("Cliquer sur un département pour voir la provenance des touristes", (offset_x+img_vierge.width*scale/2)*gs, (offset_y+15)*gs)
+            ctx.fillText("Cliquer sur un département pour voir la provenance des touristes", (offset_x+img_vierge.width*scale/2)*gs, (offset_y+15)*gs)
             ctx.globalAlpha = 1
         }
     } else if (etape_histoire == 3) {
-        if (dest_dpt == 8 && !(xyMouse.x >= offset_x && xyMouse.x <= offset_x+img_vierge.width*scale && xyMouse.y >= offset_y && xyMouse.y <= offset_y+img_vierge.height*scale)) {
+        if (dest_dpt == 8 && !(xyMouse.x >= offset_x*gs && xyMouse.x <= (offset_x+img_vierge.width*scale)*gs && xyMouse.y >= offset_y*gs && xyMouse.y <= (offset_y+img_vierge.height*scale)*gs)) {
             ctx.strokeStyle = "#ffffff"
             ctx.fillStyle = "#eeeeee"
             ctx.textAlign = "center"
-            ctx.font = "18px Arial"
+            ctx.font = "" + (18*gs) + "px Arial"
             ctx.globalAlpha = 0.25+0.75*Math.abs(time%1000-500)/500
-            ctx.strokeText("Cliquer sur l'Hérault pour comparer", offset_x+img_vierge.width*scale*departements[6].x, offset_y+img_vierge.height*scale*departements[6].y-25)
-            ctx.fillText("Cliquer sur l'Hérault pour comparer", offset_x+img_vierge.width*scale*departements[6].x, offset_y+img_vierge.height*scale*departements[6].y-25)
+            ctx.strokeText("Cliquer sur l'Hérault pour comparer", (offset_x+img_vierge.width*scale*departements[6].x)*gs, (offset_y+img_vierge.height*scale*departements[6].y-25)*gs)
+            ctx.fillText("Cliquer sur l'Hérault pour comparer", (offset_x+img_vierge.width*scale*departements[6].x)*gs, (offset_y+img_vierge.height*scale*departements[6].y-25)*gs)
             ctx.globalAlpha = 1
         }
     } else if (etape_histoire == 4) {
-        if (!(xyMouse.x >= offset_x && xyMouse.x <= offset_x+img_vierge.width*scale && xyMouse.y >= offset_y && xyMouse.y <= offset_y+img_vierge.height*scale)) {
+        if (!(xyMouse.x >= offset_x*gs && xyMouse.x <= (offset_x+img_vierge.width*scale)*gs && xyMouse.y >= offset_y*gs && xyMouse.y <= (offset_y+img_vierge.height*scale)*gs)) {
             ctx.strokeStyle = "#ffffff"
             ctx.fillStyle = "#eeeeee"
             ctx.textAlign = "center"
-            ctx.font = "18px Arial"
+            ctx.font = "" + (18*gs) + "px Arial"
             ctx.globalAlpha = 0.25+0.75*Math.abs(time%1000-500)/500
             if (calendrier === "mois") {
-                ctx.strokeText("Le nombre d'événements au fil des mois est indiqué pour pour chaque département", offset_x+img_vierge.width*scale/2, offset_y+15)
-                ctx.fillText("Le nombre d'événements au fil des mois est indiqué pour pour chaque département", offset_x+img_vierge.width*scale/2, offset_y+15)
+                ctx.strokeText("Le nombre d'événements au fil des mois est indiqué pour pour chaque département", (offset_x+img_vierge.width*scale/2)*gs, (offset_y+15)*gs)
+                ctx.fillText("Le nombre d'événements au fil des mois est indiqué pour pour chaque département", (offset_x+img_vierge.width*scale/2)*gs, (offset_y+15)*gs)
             }
             ctx.globalAlpha = 1
         }
@@ -1624,13 +1631,13 @@ function format(nb_nuitees) {
 
 
 function handle_click() {
-    if (xyClick.x >= xy_histoire.x && xyClick.y >= xy_histoire.y-35 && xyClick.y <= xy_histoire.y-35+40) {
+    if (xyClick.x >= xy_histoire.x*gs && xyClick.y >= (xy_histoire.y-35)*gs && xyClick.y <= (xy_histoire.y-35+40)*gs) {
         etape_histoire = 0
         auto_scroll = true
         day_fixe = false
         calendrier = "mois"
         day = 0
-    } else if (xyClick.x >= xy_histoire.x && xyClick.x <= xy_histoire.x + 40 && xyClick.y >= xy_histoire.y+30*ligne+50 && xyClick.y <= xy_histoire.y+30*ligne+50+40) {
+    } else if (xyClick.x >= xy_histoire.x*gs && xyClick.x <= (xy_histoire.x + 40)*gs && xyClick.y >= (xy_histoire.y+30*ligne+50)*gs && xyClick.y <= (xy_histoire.y+30*ligne+50+40)*gs) {
         etape_histoire += 1
         if (etape_histoire == 1) {
             day_fixe = false
@@ -1682,27 +1689,27 @@ function handle_click() {
             event_on = false
             etape_histoire = -1
         }
-    } else if (xyClick.x >= graphe["x"] && xyClick.x < graphe["x"] + graphe["w"] && xyClick.y < graphe["y"] && xyClick.y > graphe["y"] - graphe["h"]*1.5) {
+    } else if (xyClick.x >= graphe["x"]*gs && xyClick.x < (graphe["x"] + graphe["w"])*gs && xyClick.y < graphe["y"]*gs && xyClick.y > (graphe["y"] - graphe["h"]*1.5)*gs) {
         day_fixe = !day_fixe
-    } else if ( (xyClick.x - xy_icone_event.x)**2 + (xyClick.y - xy_icone_event.y)**2 < (xy_icone_event.w/2)**2) {
+    } else if ( (xyClick.x - xy_icone_event.x*gs)**2 + (xyClick.y - xy_icone_event.y*gs)**2 < (xy_icone_event.w*gs/2)**2) {
         event_on = !event_on
-    } else if ( (xyClick.x - xy_icone_meteo.x)**2 + (xyClick.y - xy_icone_meteo.y)**2 < (xy_icone_meteo.w/2)**2) {
+    } else if ( (xyClick.x - xy_icone_meteo.x*gs)**2 + (xyClick.y - xy_icone_meteo.y*gs)**2 < (xy_icone_meteo.w*gs/2)**2) {
         meteo = !meteo
-    } else if ( (xyClick.x - xy_icone_meteo.x + 1.25*xy_icone_meteo.w)**2 + (xyClick.y - xy_icone_meteo.y)**2 < (xy_icone_meteo.w/2)**2) {
+    } else if ( (xyClick.x - xy_icone_meteo.x*gs + 1.25*gs*xy_icone_meteo.w)**2 + (xyClick.y - xy_icone_meteo.y*gs)**2 < (xy_icone_meteo.w*gs/2)**2) {
         calendrier = "mois"
-    } else if ( (xyClick.x - xy_icone_meteo.x + 2.50*xy_icone_meteo.w)**2 + (xyClick.y - xy_icone_meteo.y)**2 < (xy_icone_meteo.w/2)**2) {
+    } else if ( (xyClick.x - xy_icone_meteo.x*gs + 2.50*gs*xy_icone_meteo.w)**2 + (xyClick.y - xy_icone_meteo.y*gs)**2 < (xy_icone_meteo.w*gs/2)**2) {
         calendrier = "semaine"
-    } else if ( (xyClick.x - xy_icone_meteo.x + 3.75*xy_icone_meteo.w)**2 + (xyClick.y - xy_icone_meteo.y)**2 < (xy_icone_meteo.w/2)**2) {
+    } else if ( (xyClick.x - xy_icone_meteo.x*gs + 3.75*gs*xy_icone_meteo.w)**2 + (xyClick.y - xy_icone_meteo.y*gs)**2 < (xy_icone_meteo.w*gs/2)**2) {
         calendrier = "jour"
-    } else if ( (xyClick.x - xy_icone_meteo.x - 16.25*xy_icone_meteo.w)**2 + (xyClick.y - xy_icone_meteo.y)**2 < (xy_icone_meteo.w/2)**2) {
+    } else if ( (xyClick.x - xy_icone_meteo.x*gs - 16.25*gs*xy_icone_meteo.w)**2 + (xyClick.y - xy_icone_meteo.y*gs)**2 < (xy_icone_meteo.w*gs/2)**2) {
         auto_scroll = !auto_scroll
     } else {
-        if (xy_icone_monde.w < 100 && (xyClick.x - xy_icone_monde.x)**2 + (xyClick.y - xy_icone_monde.y)**2 < (xy_icone_monde.w/2)**2) {
+        if (xy_icone_monde.w < 100 && (xyClick.x - xy_icone_monde.x*gs)**2 + (xyClick.y - xy_icone_monde.y*gs)**2 < (xy_icone_monde.w*gs/2)**2) {
             xy_icone_monde.w = 100
             xy_icone_monde.h = 100
             xy_icone_france.w = 50
             xy_icone_france.h = 50
-        } else if (xy_icone_france.w < 100 && (xyClick.x - xy_icone_france.x)**2 + (xyClick.y - xy_icone_france.y)**2 < (xy_icone_france.w/2)**2) {
+        } else if (xy_icone_france.w < 100 && (xyClick.x - xy_icone_france.x*gs)**2 + (xyClick.y - xy_icone_france*gs.y)**2 < (xy_icone_france.w*gs/2)**2) {
             xy_icone_monde.w = 50
             xy_icone_monde.h = 50
             xy_icone_france.w = 100
@@ -1712,8 +1719,8 @@ function handle_click() {
             new_orig_dpt = -1
 
             // Clic sur un département de la carte Occitanie
-            x_test = Math.round((xyClick.x - offset_x)/scale)
-            y_test = Math.round((xyClick.y - offset_y)/scale)
+            x_test = Math.round((xyClick.x - offset_x*gs)/(scale*gs))
+            y_test = Math.round((xyClick.y - offset_y*gs)/(scale*gs))
             if (y_test >= 0 && y_test < 783 && x_test >= 0 && x_test < 1066) {
                 for (let i = 0; i < pixels.length; i++) {
                     if (pixels[i][y_test].indexOf(x_test) > -1) {
@@ -1724,8 +1731,8 @@ function handle_click() {
 
             if (xy_icone_france.w == 100) {
                 // Clic sur un département de la carte France
-                x_test = Math.round((xyClick.x - offset_x_prov)*220/w_map)
-                y_test = Math.round((xyClick.y - offset_y_prov)*220/h_map)
+                x_test = Math.round((xyClick.x - offset_x_prov*gs)*220/(w_map*gs))
+                y_test = Math.round((xyClick.y - offset_y_prov*gs)*220/(h_map*gs))
                 if (y_test >= 0 && y_test < 1100 && x_test >= 0 && x_test < 1100) {
                     for (let i = 0; i < pixels_all.length; i++) {
                         if (pixels_all[i][y_test].indexOf(x_test) > -1) {
