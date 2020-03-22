@@ -293,6 +293,13 @@ function animate() {
     requestAnimationFrame(animate)
     ctx.clearRect(0, 0, c.width, c.height)
 
+    ctx.beginPath()
+    ctx.moveTo(0, offset_y-40.5)
+    ctx.lineTo(1920, offset_y-40.5)
+    ctx.moveTo(xy_histoire.x-50.5, 0)
+    ctx.lineTo(xy_histoire.x-50.5, 1000)
+    ctx.stroke()
+
     if (!auto_scroll && !day_fixe && xyMouse.x >= graphe["x"] && xyMouse.x < graphe["x"] + graphe["w"] && xyMouse.y < graphe["y"] && xyMouse.y > graphe["y"] - graphe["h"]*1.5) {
         day = Math.floor((xyMouse.x - graphe["x"]) / (graphe["w"]/365))
     }
@@ -458,6 +465,8 @@ function animate() {
     if (dest_dpt == -1 && orig_dpt == -1) {
         ctx.strokeText(format(""+legende), 0.5+offset_x + img_vierge.width*scale-20, offset_y + img_vierge.height*scale-44-50)
         ctx.fillText(format(""+legende), 0.5+offset_x + img_vierge.width*scale-20, offset_y + img_vierge.height*scale-44-50)
+        ctx.strokeText("0", 0.5+offset_x + img_vierge.width*scale-200-20, offset_y + img_vierge.height*scale-44-50)
+        ctx.fillText("0", 0.5+offset_x + img_vierge.width*scale-200-20, offset_y + img_vierge.height*scale-44-50)
     } else if (orig_dpt > -1) {
         if (calendrier === "jour") {
             ctx.strokeText(format(""+legende), 0.5+offset_x + img_vierge.width*scale-20, offset_y + img_vierge.height*scale-44-50)
