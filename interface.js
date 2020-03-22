@@ -1114,7 +1114,7 @@ function animate() {
             xy_icone_monde.h = xy_icone_monde.w
         }
     } else if (xy_icone_france.w < 100) {
-        if ( (xyMouse.x - xy_icone_france.x)**2 + (xyMouse.y - xy_icone_france.y)**2 < (xy_icone_france.w/2)**2) {
+        if ( (xyMouse.x - xy_icone_france.x*gs)**2 + (xyMouse.y - xy_icone_france.y*gs)**2 < (xy_icone_france.w*gs/2)**2) {
             xy_icone_france.w = Math.min(75, xy_icone_france.w+2.5)
             xy_icone_france.h = xy_icone_france.w
         } else {
@@ -1704,12 +1704,12 @@ function handle_click() {
     } else if ( (xyClick.x - xy_icone_meteo.x*gs - 16.25*gs*xy_icone_meteo.w)**2 + (xyClick.y - xy_icone_meteo.y*gs)**2 < (xy_icone_meteo.w*gs/2)**2) {
         auto_scroll = !auto_scroll
     } else {
-        if (xy_icone_monde.w < 100 && (xyClick.x - xy_icone_monde.x*gs)**2 + (xyClick.y - xy_icone_monde.y*gs)**2 < (xy_icone_monde.w*gs/2)**2) {
+        if ( (xyClick.x - xy_icone_monde.x*gs)**2 + (xyClick.y - xy_icone_monde.y*gs)**2 < (xy_icone_monde.w*gs/2)**2) {
             xy_icone_monde.w = 100
             xy_icone_monde.h = 100
             xy_icone_france.w = 50
             xy_icone_france.h = 50
-        } else if (xy_icone_france.w < 100 && (xyClick.x - xy_icone_france.x*gs)**2 + (xyClick.y - xy_icone_france*gs.y)**2 < (xy_icone_france.w*gs/2)**2) {
+        } else if ( (xyClick.x - xy_icone_france.x*gs)**2 + (xyClick.y - xy_icone_france.y*gs)**2 < (xy_icone_france.w*gs/2)**2) {
             xy_icone_monde.w = 50
             xy_icone_monde.h = 50
             xy_icone_france.w = 100
