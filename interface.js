@@ -44,7 +44,7 @@ function init() {
     }, false)
 
     graphe = {"x": 80, "y": 250, "h": 80, "w": 730}
-    camembert = {"x": 1225, "y": 410, "r": 50}
+    camembert = {"x": 1710, "y": 800, "r": 110}
 
     frame = 0
     frames = [0, 208, 0, 0, 0, 0, 0]
@@ -434,8 +434,27 @@ function animate() {
                 ctx.font = "10px Arial"
                 ctx.strokeText(liste_events.length, offset_x + img_vierge.width*scale*departements[i]["x"]+30*scale, offset_y + img_vierge.height*scale*departements[i]["y"]+65*scale)
                 ctx.fillText(liste_events.length, offset_x + img_vierge.width*scale*departements[i]["x"]+30*scale, offset_y + img_vierge.height*scale*departements[i]["y"]+65*scale)
-                ctx.strokeText(liste_events[Math.floor(time/3000)%liste_events.length], offset_x + img_vierge.width*scale*departements[i]["x"], offset_y + img_vierge.height*scale*departements[i]["y"]+65*scale+15)
-                ctx.fillText(liste_events[Math.floor(time/3000)%liste_events.length], offset_x + img_vierge.width*scale*departements[i]["x"], offset_y + img_vierge.height*scale*departements[i]["y"]+65*scale+15)
+
+
+                mots = liste_events[Math.floor(time/3000)%liste_events.length].split(" ")
+                ligne = 0
+                mot = 0
+                texte_to_print = ""
+                while (mot < mots.length && mot < 100) {
+                    texte_to_print_potentiel = texte_to_print + mots[mot] + " "
+                    if (ctx.measureText(texte_to_print_potentiel).width < 160) {
+                        texte_to_print = texte_to_print_potentiel
+                        mot++
+                    } else {
+                        ctx.strokeText(texte_to_print, offset_x + img_vierge.width*scale*departements[i]["x"], offset_y + img_vierge.height*scale*departements[i]["y"]+65*scale+15+13*ligne)
+                        ctx.fillText(texte_to_print, offset_x + img_vierge.width*scale*departements[i]["x"], offset_y + img_vierge.height*scale*departements[i]["y"]+65*scale+15+13*ligne)
+                        texte_to_print = ""
+                        ligne++
+                    }
+                }
+
+                ctx.strokeText(texte_to_print, offset_x + img_vierge.width*scale*departements[i]["x"], offset_y + img_vierge.height*scale*departements[i]["y"]+65*scale+15+13*ligne)
+                ctx.fillText(texte_to_print, offset_x + img_vierge.width*scale*departements[i]["x"], offset_y + img_vierge.height*scale*departements[i]["y"]+65*scale+15+13*ligne)
             }
         }
     }
@@ -458,6 +477,24 @@ function animate() {
         ctx.lineTo(0.5+offset_x + img_vierge.width*scale-20, offset_y + img_vierge.height*scale-50)
         ctx.lineTo(0.5+offset_x + img_vierge.width*scale-200-20, offset_y + img_vierge.height*scale-50)
         ctx.stroke()
+    } else if (dest_dpt > -1 && xy_icone_monde.w < 100) {
+        ctx.strokeStyle = "#ff0000"
+        for (let i = 1; i <= 200; i++) {
+            ctx.globalAlpha = i/200
+            ctx.beginPath()
+            ctx.moveTo(0.5+offset_x_prov + 600*scale+i+240-20, offset_y_prov + img_vierge.height*scale-50)
+            ctx.lineTo(0.5+offset_x_prov + 600*scale+i+240-20, offset_y_prov + img_vierge.height*scale-40-50)
+            ctx.stroke()
+        }
+
+        ctx.strokeStyle = "#ffffff"
+        ctx.beginPath()
+        ctx.moveTo(0.5+offset_x_prov + 600*scale+1+240-20, offset_y_prov + img_vierge.height*scale-50)
+        ctx.lineTo(0.5+offset_x_prov + 600*scale+1+240-20, offset_y_prov + img_vierge.height*scale-40-50)
+        ctx.lineTo(0.5+offset_x_prov + 600*scale+200+240-20, offset_y_prov + img_vierge.height*scale-40-50)
+        ctx.lineTo(0.5+offset_x_prov + 600*scale+200+240-20, offset_y_prov + img_vierge.height*scale-50)
+        ctx.lineTo(0.5+offset_x_prov + 600*scale+1+240-20, offset_y_prov + img_vierge.height*scale-50)
+        ctx.stroke()
     }
 
     if (!event_on) {
@@ -474,6 +511,22 @@ function animate() {
         ctx.fillText(format(""+legende), 0.5+offset_x + img_vierge.width*scale-20, offset_y + img_vierge.height*scale-44-50)
         ctx.strokeText("0", 0.5+offset_x + img_vierge.width*scale-200-20, offset_y + img_vierge.height*scale-44-50)
         ctx.fillText("0", 0.5+offset_x + img_vierge.width*scale-200-20, offset_y + img_vierge.height*scale-44-50)
+    } else if (dest_dpt > -1) {
+        ctx.strokeText("0", 0.5+offset_x_prov + 600*scale+1+240-20, offset_y + img_vierge.height*scale-44-50)
+        ctx.fillText("0", 0.5+offset_x_prov + 600*scale+1+240-20, offset_y + img_vierge.height*scale-44-50)
+
+        if (calendrier === "jour") {
+            vv = 2000//departements[dest_dpt]["volume"][day]
+        } else if (calendrier === "semaine") {
+            vv = 15000//departements[dest_dpt]["volume"][Math.floor(day/7)]
+        } else if (calendrier === "mois") {
+            vv = 50000//departements[dest_dpt]["volume"][start_mois[mois_annee[day]]]
+        }
+
+        ctx.strokeText(""+vv, 0.5+offset_x_prov + 200+600*scale+1+240-20, offset_y + img_vierge.height*scale-44-50)
+        ctx.fillText(""+vv, 0.5+offset_x_prov + 200+600*scale+1+240-20, offset_y + img_vierge.height*scale-44-50)
+
+
     } else if (orig_dpt > -1) {
         if (calendrier === "jour") {
             ctx.strokeText(format(""+legende), 0.5+offset_x + img_vierge.width*scale-20, offset_y + img_vierge.height*scale-44-50)
@@ -955,6 +1008,7 @@ function animate() {
     }
 
     ctx.textAlign = "center"
+    ctx.strokeStyle = "#eeeeee"
     ctx.fillStyle = "#eeeeee"
     ctx.font = "14px Arial"
     ctx.strokeText("nuitées", graphe["x"], graphe["y"]-graphe["h"]*1.15-10)
@@ -963,26 +1017,35 @@ function animate() {
     if (dest_dpt == -1 && orig_dpt == -1) {
         if (calendrier === "jour") {
             ctx.strokeText("500 000", graphe["x"]-8, graphe["y"]-graphe["h"]*0.5+5)
+            ctx.fillText("500 000", graphe["x"]-8, graphe["y"]-graphe["h"]*0.5+5)
         } else if (calendrier === "semaine") {
             ctx.strokeText("3 500 000", graphe["x"]-8, graphe["y"]-graphe["h"]*0.5+5)
+            ctx.fillText("3 500 000", graphe["x"]-8, graphe["y"]-graphe["h"]*0.5+5)
         } else if (calendrier === "mois") {
             ctx.strokeText("15 000 000", graphe["x"]-8, graphe["y"]-graphe["h"]*0.5+5)
+            ctx.fillText("15 000 000", graphe["x"]-8, graphe["y"]-graphe["h"]*0.5+5)
         }
     } else if (dest_dpt > -1) {
         if (calendrier === "jour") {
             ctx.strokeText(format(""+(departements[dest_dpt]["leg"]/2)), graphe["x"]-8, graphe["y"]-graphe["h"]*0.5+5)
+            ctx.fillText(format(""+(departements[dest_dpt]["leg"]/2)), graphe["x"]-8, graphe["y"]-graphe["h"]*0.5+5)
         } else if (calendrier === "semaine") {
             ctx.strokeText(format(""+(7*departements[dest_dpt]["leg"]/2)), graphe["x"]-8, graphe["y"]-graphe["h"]*0.5+5)
+            ctx.fillText(format(""+(7*departements[dest_dpt]["leg"]/2)), graphe["x"]-8, graphe["y"]-graphe["h"]*0.5+5)
         } else if (calendrier === "mois") {
             ctx.strokeText(format(""+(30*departements[dest_dpt]["leg"]/2)), graphe["x"]-8, graphe["y"]-graphe["h"]*0.5+5)
+            ctx.fillText(format(""+(30*departements[dest_dpt]["leg"]/2)), graphe["x"]-8, graphe["y"]-graphe["h"]*0.5+5)
         }
     } else if (orig_dpt > -1) {
         if (calendrier === "jour") {
             ctx.strokeText(format(""+(legendes[orig_dpt]*2.5)), graphe["x"]-8, graphe["y"]-graphe["h"]*0.5+5)
+            ctx.fillText(format(""+(legendes[orig_dpt]*2.5)), graphe["x"]-8, graphe["y"]-graphe["h"]*0.5+5)
         } else if (calendrier === "semaine") {
             ctx.strokeText(format(""+(7*legendes[orig_dpt]*2.5)), graphe["x"]-8, graphe["y"]-graphe["h"]*0.5+5)
+            ctx.fillText(format(""+(7*legendes[orig_dpt]*2.5)), graphe["x"]-8, graphe["y"]-graphe["h"]*0.5+5)
         } else if (calendrier === "mois") {
             ctx.strokeText(format(""+(30*legendes[orig_dpt]*2.5)), graphe["x"]-8, graphe["y"]-graphe["h"]*0.5+5)
+            ctx.fillText(format(""+(30*legendes[orig_dpt]*2.5)), graphe["x"]-8, graphe["y"]-graphe["h"]*0.5+5)
         }
     }
 
@@ -1121,42 +1184,6 @@ function animate() {
         delete canv
         ctx.drawImage(img_france_vierge, offset_x_prov, offset_y_prov, w_map, h_map)
 
-        // Ajout chiffres clés
-
-        ctx.beginPath()
-        ctx.moveTo(offset_x_prov + w_map + 40, offset_y_prov)
-        ctx.lineTo(offset_x_prov + w_map + 40, offset_y_prov+h_map-50)
-        ctx.lineTo(offset_x_prov + w_map + 340, offset_y_prov+h_map-50)
-        ctx.lineTo(offset_x_prov + w_map + 340, offset_y_prov)
-        ctx.lineTo(offset_x_prov + w_map + 40, offset_y_prov)
-        ctx.strokeStyle = "#222222"
-        ctx.stroke()
-        ctx.fillStyle = "#444444"
-        ctx.fill()
-
-        ctx.strokeStyle = "#ffffff"
-        ctx.fillStyle = "#eeeeee"
-        ctx.textAlign = "center"
-        ctx.font = "24px Arial"
-
-        ctx.strokeText("L'année 2018 en", offset_x_prov + w_map + 40 +150, offset_y_prov+40*1)
-        ctx.fillText("L'année 2018 en", offset_x_prov + w_map + 40 + 150, offset_y_prov+40*1)
-
-        ctx.strokeText("quelques chiffres clé :", offset_x_prov + w_map + 40 + 150, offset_y_prov+40*2-5)
-        ctx.fillText("quelques chiffres clé :", offset_x_prov + w_map + 40 + 150, offset_y_prov+40*2-5)
-
-        ctx.textAlign = "left"
-        ctx.font = "18px Arial"
-        ctx.strokeText("⚫ 200 millions de nuitées", offset_x_prov + w_map + 40 + 20, offset_y_prov+40*3)
-        ctx.fillText("⚫ 200 millions de nuitées", offset_x_prov + w_map + 40 + 20, offset_y_prov+40*3)
-
-        ctx.strokeText("⚫ 41% de touristes étrangers", offset_x_prov + w_map + 40 + 20, offset_y_prov+40*4)
-        ctx.fillText("⚫ 41% de touristes étrangers", offset_x_prov + w_map + 40 + 20, offset_y_prov+40*4)
-
-        ctx.strokeText("⚫ 200 événements", offset_x_prov + w_map + 40 + 20, offset_y_prov+40*5)
-        ctx.fillText("⚫ 200 événements", offset_x_prov + w_map + 40 + 20, offset_y_prov+40*5)
-
-
     } else if (xy_icone_monde.w == 100) {
 //        ctx.drawImage(img_fr, offset_x_prov+60+100, offset_y_prov+45*0+80)
         ctx.drawImage(img_de, offset_x_prov+60+100, offset_y_prov+48*1+60)
@@ -1263,8 +1290,8 @@ function animate() {
                     vols_totaux.push(vol_total)
                     ctx.beginPath()
                     ctx.moveTo(offset_x_prov+65+150, offset_y_prov+48*mapping_pays[i]+60)
-                    ctx.lineTo(offset_x_prov+65+150+vol_total*0.025, offset_y_prov+48*mapping_pays[i]+60)
-                    ctx.lineTo(offset_x_prov+65+150+vol_total*0.025, offset_y_prov+48*mapping_pays[i]+60+35)
+                    ctx.lineTo(offset_x_prov+65+150+vol_total*0.010, offset_y_prov+48*mapping_pays[i]+60)
+                    ctx.lineTo(offset_x_prov+65+150+vol_total*0.010, offset_y_prov+48*mapping_pays[i]+60+35)
                     ctx.lineTo(offset_x_prov+65+150, offset_y_prov+48*mapping_pays[i]+60+35)
                     ctx.lineTo(offset_x_prov+65+150, offset_y_prov+48*mapping_pays[i]+60)
                     ctx.stroke()
@@ -1273,8 +1300,8 @@ function animate() {
                     ctx.fillStyle = "#ffffff"
                     ctx.strokeStyle = "#ffffff"
                     ctx.textAlign = "left"
-                    ctx.strokeText(format(""+vol_total), offset_x_prov+65+150+vol_total*0.025+5, offset_y_prov+48*mapping_pays[i]+60+24)
-                    ctx.fillText(format(""+vol_total), offset_x_prov+65+150+vol_total*0.025+5, offset_y_prov+48*mapping_pays[i]+60+24)
+                    ctx.strokeText(format(""+vol_total), offset_x_prov+65+150+vol_total*0.010+5, offset_y_prov+48*mapping_pays[i]+60+24)
+                    ctx.fillText(format(""+vol_total), offset_x_prov+65+150+vol_total*0.010+5, offset_y_prov+48*mapping_pays[i]+60+24)
                 }
             } else if (calendrier === "semaine") {
                 for (let i in mapping_pays) {
@@ -1294,8 +1321,8 @@ function animate() {
                     vols_totaux.push(vol_total)
                     ctx.beginPath()
                     ctx.moveTo(offset_x_prov+65+150, offset_y_prov+48*mapping_pays[i]+60)
-                    ctx.lineTo(offset_x_prov+65+150+vol_total*0.025/7, offset_y_prov+48*mapping_pays[i]+60)
-                    ctx.lineTo(offset_x_prov+65+150+vol_total*0.025/7, offset_y_prov+48*mapping_pays[i]+60+35)
+                    ctx.lineTo(offset_x_prov+65+150+vol_total*0.010/7, offset_y_prov+48*mapping_pays[i]+60)
+                    ctx.lineTo(offset_x_prov+65+150+vol_total*0.010/7, offset_y_prov+48*mapping_pays[i]+60+35)
                     ctx.lineTo(offset_x_prov+65+150, offset_y_prov+48*mapping_pays[i]+60+35)
                     ctx.lineTo(offset_x_prov+65+150, offset_y_prov+48*mapping_pays[i]+60)
                     ctx.stroke()
@@ -1304,8 +1331,8 @@ function animate() {
                     ctx.fillStyle = "#ffffff"
                     ctx.strokeStyle = "#ffffff"
                     ctx.textAlign = "left"
-                    ctx.strokeText(format(""+vol_total), offset_x_prov+65+150+vol_total*0.025/7+5, offset_y_prov+48*mapping_pays[i]+60+24)
-                    ctx.fillText(format(""+vol_total), offset_x_prov+65+150+vol_total*0.025/7+5, offset_y_prov+48*mapping_pays[i]+60+24)
+                    ctx.strokeText(format(""+vol_total), offset_x_prov+65+150+vol_total*0.010/7+5, offset_y_prov+48*mapping_pays[i]+60+24)
+                    ctx.fillText(format(""+vol_total), offset_x_prov+65+150+vol_total*0.010/7+5, offset_y_prov+48*mapping_pays[i]+60+24)
 
                 }
             } else if (calendrier === "mois") {
@@ -1317,8 +1344,8 @@ function animate() {
                     vols_totaux.push(vol_total)
                     ctx.beginPath()
                     ctx.moveTo(offset_x_prov+65+150, offset_y_prov+48*mapping_pays[i]+60)
-                    ctx.lineTo(offset_x_prov+65+150+vol_total*0.025/30, offset_y_prov+48*mapping_pays[i]+60)
-                    ctx.lineTo(offset_x_prov+65+150+vol_total*0.025/30, offset_y_prov+48*mapping_pays[i]+60+35)
+                    ctx.lineTo(offset_x_prov+65+150+vol_total*0.010/30, offset_y_prov+48*mapping_pays[i]+60)
+                    ctx.lineTo(offset_x_prov+65+150+vol_total*0.010/30, offset_y_prov+48*mapping_pays[i]+60+35)
                     ctx.lineTo(offset_x_prov+65+150, offset_y_prov+48*mapping_pays[i]+60+35)
                     ctx.lineTo(offset_x_prov+65+150, offset_y_prov+48*mapping_pays[i]+60)
                     ctx.stroke()
@@ -1327,8 +1354,8 @@ function animate() {
                     ctx.fillStyle = "#ffffff"
                     ctx.strokeStyle = "#ffffff"
                     ctx.textAlign = "left"
-                    ctx.strokeText(format(""+vol_total), offset_x_prov+65+150+vol_total*0.025/30+5, offset_y_prov+48*mapping_pays[i]+60+24)
-                    ctx.fillText(format(""+vol_total), offset_x_prov+65+150+vol_total*0.025/30+5, offset_y_prov+48*mapping_pays[i]+60+24)
+                    ctx.strokeText(format(""+vol_total), offset_x_prov+65+150+vol_total*0.010/30+5, offset_y_prov+48*mapping_pays[i]+60+24)
+                    ctx.fillText(format(""+vol_total), offset_x_prov+65+150+vol_total*0.010/30+5, offset_y_prov+48*mapping_pays[i]+60+24)
                 }
             }
         }
@@ -1351,6 +1378,47 @@ function animate() {
             cumul += 2*Math.PI*vols_totaux[i]/total_total
         }
     }
+
+    // Ajout chiffres clés
+
+    of = 50
+
+    ctx.beginPath()
+    ctx.moveTo(offset_x_prov + w_map + 40, offset_y_prov+of)
+    ctx.lineTo(offset_x_prov + w_map + 40, offset_y_prov+h_map-250-of)
+    ctx.lineTo(offset_x_prov + w_map + 340, offset_y_prov+h_map-250-of)
+    ctx.lineTo(offset_x_prov + w_map + 340, offset_y_prov+of)
+    ctx.lineTo(offset_x_prov + w_map + 40, offset_y_prov+of)
+    ctx.strokeStyle = "#222222"
+    ctx.stroke()
+    ctx.fillStyle = "#444444"
+    ctx.fill()
+
+    ctx.strokeStyle = "#ffffff"
+    ctx.fillStyle = "#eeeeee"
+    ctx.textAlign = "center"
+    ctx.font = "22px Arial"
+
+    ctx.strokeText("Le tourisme en 2018 en", offset_x_prov + w_map + 40 +150, offset_y_prov+38*1+of)
+    ctx.fillText("Le tourisme en 2018 en", offset_x_prov + w_map + 40 +150, offset_y_prov+38*1+of)
+//    ctx.fillText("L'année 2018 en", offset_x_prov + w_map + 40 + 150, offset_y_prov+40*1+of)
+
+    ctx.strokeText("quelques chiffres clé :", offset_x_prov + w_map + 40 + 150, offset_y_prov+38*2-10+of)
+    ctx.fillText("quelques chiffres clé :", offset_x_prov + w_map + 40 + 150, offset_y_prov+38*2-10+of)
+
+    ctx.textAlign = "left"
+    ctx.font = "18px Arial"
+    ctx.strokeText("− 200 millions de nuitées", offset_x_prov + w_map + 40 + 20, offset_y_prov+38*3+of)
+    ctx.fillText("− 200 millions de nuitées", offset_x_prov + w_map + 40 + 20, offset_y_prov+38*3+of)
+
+    ctx.strokeText("− 41% de touristes étrangers", offset_x_prov + w_map + 40 + 20, offset_y_prov+38*4+of)
+    ctx.fillText("− 41% de touristes étrangers", offset_x_prov + w_map + 40 + 20, offset_y_prov+38*4+of)
+
+    ctx.strokeText("− 35% des nuitées en juillet-août", offset_x_prov + w_map + 40 + 20, offset_y_prov+38*5+of)
+    ctx.fillText("− 35% des nuitées en juillet-août", offset_x_prov + w_map + 40 + 20, offset_y_prov+38*5+of)
+
+    ctx.strokeText("− 202 événements", offset_x_prov + w_map + 40 + 20, offset_y_prov+38*6+of)
+    ctx.fillText("− 202 événements", offset_x_prov + w_map + 40 + 20, offset_y_prov+38*6+of)
 
 
 //    ctx.strokeText(xyMouse.x, 100, 20)
@@ -1426,7 +1494,7 @@ function animate() {
         ctx.fillText("Cliquer ici pour arrêter le défilement automatique", xy_icone_meteo.x + 16.25*xy_icone_meteo.w, xy_icone_meteo.y+30)
         ctx.globalAlpha = 1
     } else if (etape_histoire == 1) {
-        if (!(xyMouse.x >= offset_x_prov && xyMouse.x <= offset_x_prov+w_map && xyMouse.y >= offset_y_prov && xyMouse.y <= offset_y_prov+h_map)) {
+        if (xy_icone_monde.w < 100 && !(xyMouse.x >= offset_x_prov && xyMouse.x <= offset_x_prov+w_map && xyMouse.y >= offset_y_prov && xyMouse.y <= offset_y_prov+h_map)) {
             ctx.strokeStyle = "#ffffff"
             ctx.fillStyle = "#eeeeee"
             ctx.textAlign = "center"
