@@ -159,6 +159,8 @@ function init() {
     xy_icone_meteo = {"x": graphe["x"]+16+120, "y": graphe["y"]+16 + 10, "w": 32, "h": 32}
     xy_histoire = {"x": 940, "y": 60}
 
+    img_bois = new_image("./bois.jpg")
+
     imgs_dep = []
     imgs_dep_bleu = []
     for (let i = 1; i <= 95; i++) {
@@ -293,6 +295,8 @@ function animate() {
     requestAnimationFrame(animate)
     ctx.clearRect(0, 0, c.width, c.height)
 
+    ctx.drawImage(img_bois, xy_histoire.x-50, 0, 1920-(xy_histoire.x-50), offset_y-40)
+
     ctx.beginPath()
     ctx.moveTo(0, offset_y-40.5)
     ctx.lineTo(1920, offset_y-40.5)
@@ -424,7 +428,7 @@ function animate() {
             if (liste_events.length > 0) {
                 ctx.drawImage(img_event, offset_x + img_vierge.width*scale*departements[i]["x"]-16, offset_y + img_vierge.height*scale*departements[i]["y"]+35*scale, 32, 32)
                 ctx.textAlign = "center"
-                ctx.font = "14px Arial"
+                ctx.font = "10px Arial"
                 ctx.strokeText(liste_events.length, offset_x + img_vierge.width*scale*departements[i]["x"]+30*scale, offset_y + img_vierge.height*scale*departements[i]["y"]+65*scale)
                 ctx.fillText(liste_events.length, offset_x + img_vierge.width*scale*departements[i]["x"]+30*scale, offset_y + img_vierge.height*scale*departements[i]["y"]+65*scale)
                 ctx.strokeText(liste_events[Math.floor(time/3000)%liste_events.length], offset_x + img_vierge.width*scale*departements[i]["x"], offset_y + img_vierge.height*scale*departements[i]["y"]+65*scale+15)
