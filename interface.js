@@ -71,6 +71,8 @@ function init() {
     colors_pays = {"100": "#00aaaa", "101": "#aa5555", "102": "#00aa55", "103": "#2244ee", "104": "#aa00ee", "105": "#bb5500", "106": "#abcced", "107": "#036733", "108": "#fec34d", "109": "#aa8844"}
     colors_pays_ordered = [colors_pays["100"], colors_pays["101"], colors_pays["102"], colors_pays["103"], colors_pays["104"], colors_pays["105"], colors_pays["106"], colors_pays["107"], colors_pays["108"], colors_pays["109"]]
 
+    img_occitanie = new_image("./occitanie.png")
+
     img_fr = new_image("./flag_FR.png")
     img_de = new_image("./flag_DE.png")
     img_it = new_image("./flag_IT.png")
@@ -236,7 +238,7 @@ function init() {
         },
         {
             "titre": "7) Que retenir ?",
-            "texte": "L’Occitanie n’irrigue pas seulement un cœur, mais un corps tout entier. À travers le temps et l’espace, la région sait se rendre attractive grâce à de multiples événements. Malgré des inégalités de répartition des touristes dans la région, l'Occitanie est un bassin attractif auprès des touristes français et étrangers. L'été, ce cœur bat la chamade. Enfin, deux départements se démarquent : l'Hérault et les Pyrénées Orientales concentrent en effet près de la moitié des nuitées annuelles et organisent 40% des événéments de la région."// Les régions françaises se répondent les unes aux autres. C’est cette harmonie qui fait de notre pays, un havre de bien-être."
+            "texte": "L’Occitanie n’irrigue pas seulement un cœur, mais un corps tout entier. À travers le temps et l’espace, la région sait se rendre attractive grâce à de multiples événements. Malgré des inégalités de répartition dans la région, l'Occitanie est un bassin attractif auprès des touristes français et étrangers. L'été, ce cœur bat la chamade. Enfin, deux départements se démarquent : l'Hérault et les Pyrénées Orientales concentrent en effet près de la moitié des nuitées annuelles et organisent 40% des événéments de la région."// Les régions françaises se répondent les unes aux autres. C’est cette harmonie qui fait de notre pays, un havre de bien-être."
         },
     ]
 
@@ -297,6 +299,7 @@ function animate() {
 
     ctx.drawImage(img_bois, xy_histoire.x-50, 0, 1920-(xy_histoire.x-50), offset_y-40)
 
+    ctx.strokeStyle = "#ffffff"
     ctx.beginPath()
     ctx.moveTo(0, offset_y-40.5)
     ctx.lineTo(1920, offset_y-40.5)
@@ -865,11 +868,14 @@ function animate() {
         ctx.strokeText(mois_maj[mois_annee[day]] + " 2018", 0.5+graphe["x"]+step*365/2, 0.5+graphe["y"]+36)
         ctx.fillText(mois_maj[mois_annee[day]] + " 2018", 0.5+graphe["x"]+step*365/2, 0.5+graphe["y"]+36)
     }
+
+    ctx.drawImage(img_occitanie, 30, 20, 70, 50)
     ctx.textAlign = "left"
     ctx.fillStyle = "#eeeeee"
     ctx.font = "48px Arial"
-    ctx.strokeText("Le tourisme en Occitanie en 2018", 30, 60)
-    ctx.fillText("Le tourisme en Occitanie en 2018", 30, 60)
+    ctx.strokeText("Le tourisme en Occitanie en 2018", 110, 60)
+    ctx.fillText("Le tourisme en Occitanie en 2018", 110, 60)
+    ctx.strokeStyle = "#111111"
 
     if (etape_histoire == -1) {
         ctx.font = "40px Arial"
