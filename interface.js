@@ -1410,8 +1410,8 @@ function animate() {
     ctx.fillText("Le tourisme en 2018 en", (offset_x_prov + w_map + 40 +150)*gs, (offset_y_prov+38*1+of)*gs)
 //    ctx.fillText("L'année 2018 en", offset_x_prov + w_map + 40 + 150, offset_y_prov+40*1+of)
 
-    ctx.strokeText("quelques chiffres clé :", (offset_x_prov + w_map + 40 + 150)*gs, (offset_y_prov+38*2-10+of)*gs)
-    ctx.fillText("quelques chiffres clé :", (offset_x_prov + w_map + 40 + 150)*gs, (offset_y_prov+38*2-10+of)*gs)
+    ctx.strokeText("quelques chiffres-clés :", (offset_x_prov + w_map + 40 + 150)*gs, (offset_y_prov+38*2-10+of)*gs)
+    ctx.fillText("quelques chiffres-clés :", (offset_x_prov + w_map + 40 + 150)*gs, (offset_y_prov+38*2-10+of)*gs)
 
     ctx.textAlign = "left"
     ctx.font = "" + (18*gs) + "px Arial"
