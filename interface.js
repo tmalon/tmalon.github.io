@@ -1456,28 +1456,28 @@ function animate() {
         }
     } else if ( (xyMouse.x - xy_icone_event.x*gs)**2 + (xyMouse.y - xy_icone_event.y*gs)**2 < (xy_icone_event.w*gs/2)**2) {
 
-    } else if ( (xyMouse.x - (xy_icone_meteo.x + 1.25*xy_icone_meteo.w)*gs)**2 + (xyMouse.y - xy_icone_meteo.y*gs)**2 < (xy_icone_meteo.w*gs/2)**2) {
+    } else if ( (xyMouse.x - (xy_icone_meteo.x - 1.25*xy_icone_meteo.w)*gs)**2 + (xyMouse.y - xy_icone_meteo.y*gs)**2 < (xy_icone_meteo.w*gs/2)**2) {
         ctx.strokeStyle = "#ffffff"
         ctx.fillStyle = "#eeeeee"
         ctx.textAlign = "center"
         ctx.font = "" + (14*gs) + "px Arial"
         ctx.strokeText("Afficher par mois", (xy_icone_meteo.x - 1.25*xy_icone_meteo.w)*gs, (xy_icone_meteo.y+30)*gs)
         ctx.fillText("Afficher par mois", (xy_icone_meteo.x - 1.25*xy_icone_meteo.w)*gs, (xy_icone_meteo.y+30)*gs)
-    } else if ( (xyMouse.x - (xy_icone_meteo.x + 2.50*xy_icone_meteo.w)*gs)**2 + (xyMouse.y - xy_icone_meteo.y*gs)**2 < (xy_icone_meteo.w*gs/2)**2) {
+    } else if ( (xyMouse.x - (xy_icone_meteo.x - 2.50*xy_icone_meteo.w)*gs)**2 + (xyMouse.y - xy_icone_meteo.y*gs)**2 < (xy_icone_meteo.w*gs/2)**2) {
         ctx.strokeStyle = "#ffffff"
         ctx.fillStyle = "#eeeeee"
         ctx.textAlign = "center"
         ctx.font = "" + (14*gs) + "px Arial"
         ctx.strokeText("Afficher par semaine", (xy_icone_meteo.x - 2.50*xy_icone_meteo.w)*gs, (xy_icone_meteo.y+30)*gs)
         ctx.fillText("Afficher par semaine", (xy_icone_meteo.x - 2.50*xy_icone_meteo.w)*gs, (xy_icone_meteo.y+30)*gs)
-    } else if ( (xyMouse.x - (xy_icone_meteo.x + 3.75*xy_icone_meteo.w)*gs)**2 + (xyMouse.y - xy_icone_meteo.y*gs)**2 < (xy_icone_meteo.w*gs/2)**2) {
+    } else if ( (xyMouse.x - (xy_icone_meteo.x - 3.75*xy_icone_meteo.w)*gs)**2 + (xyMouse.y - xy_icone_meteo.y*gs)**2 < (xy_icone_meteo.w*gs/2)**2) {
         ctx.strokeStyle = "#ffffff"
         ctx.fillStyle = "#eeeeee"
         ctx.textAlign = "center"
         ctx.font = "" + (14*gs) + "px Arial"
         ctx.strokeText("Afficher par jour", (xy_icone_meteo.x - 3.75*xy_icone_meteo.w)*gs, (xy_icone_meteo.y+30)*gs)
         ctx.fillText("Afficher par jour", (xy_icone_meteo.x - 3.75*xy_icone_meteo.w)*gs, (xy_icone_meteo.y+30)*gs)
-    } else if ( (xyMouse.x - (xy_icone_meteo.x - 16.25*xy_icone_meteo.w)*gs)**2 + (xyMouse.y - xy_icone_meteo.y*gs)**2 < (xy_icone_meteo.w*gs/2)**2) {
+    } else if ( (xyMouse.x - (xy_icone_meteo.x + 16.25*xy_icone_meteo.w)*gs)**2 + (xyMouse.y - xy_icone_meteo.y*gs)**2 < (xy_icone_meteo.w*gs/2)**2) {
         ctx.strokeStyle = "#ffffff"
         ctx.fillStyle = "#eeeeee"
         ctx.textAlign = "center"
